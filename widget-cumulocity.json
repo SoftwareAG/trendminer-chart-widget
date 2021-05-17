@@ -1,0 +1,13 @@
+{
+    "name": "TrendMiner chart",
+    "contextPath": "trendminer-chart-widget",
+    "key": "trendminer-chart-widget-application-key",
+    "contentSecurityPolicy": "default-src 'self'",
+    "description": "DESCRIPTION FOR TrendminerChartWidget",
+    "icon": {
+        "class": "fa fw fa-area-chart"
+    },
+    "manifest": {
+        "noAppSwitcher": true
+    }
+}

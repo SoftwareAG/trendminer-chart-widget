@@ -1,0 +1,17 @@
+<ng-form #configForm="ngForm">
+
+    <c8y-form-group>
+        <label for="TrendminerChartWidgetConfig">
+            TrendminerChartWidgetConfig Configuration
+        </label>
+    </c8y-form-group>
+
+    <c8y-form-group>
+        <label for="TrendminerChartWidget-myValue">
+            Simple Value
+        </label>
+        <input type="text" name="TrendminerChartWidget-myValue" id="TrendminerChartWidget-myValue" class="form-control bar-chart-control"
+            (change)="onConfigChanged($event)" [(ngModel)]="config.myValue" placeholder='val' />
+    </c8y-form-group>
+
+</ng-form>
