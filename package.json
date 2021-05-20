@@ -1,6 +1,6 @@
 {
     "name": "trendminer-chart-widget",
-    "version": "1.0.7",
+    "version": "1.0.10",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -26,10 +26,13 @@
         "@c8y/ng1-modules": "1007.0.38",
         "@c8y/ngx-components": "1007.0.38",
         "@c8y/style": "1007.0.38",
+        "@ng-bootstrap/ng-bootstrap": "^5.3.1",
+        "@ng-select/ng-select": "^3.7.3",
         "angular": "1.6.9",
         "chart.js": "2.9.2",
         "chartjs-plugin-annotation": "^1.0.1",
         "core-js": "^3.4.0",
+        "luxon": "^1.27.0",
         "ng2-charts": "^2.4.2",
         "rxjs": "~6.4.0",
         "url-search-params-polyfill": "6.0.0",

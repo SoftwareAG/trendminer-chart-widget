@@ -1,0 +1,89 @@
+{
+	"info": {
+		"_postman_id": "30226b66-e634-4fdd-a011-f4d20f5cbad1",
+		"name": "TrendMiner",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "focus Graph",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"timePeriod\": {\r\n        \"startDate\": \"2019-05-04T16:30:00.000Z\",\r\n        \"endDate\": \"2019-05-04T22:00:00.000Z\"\r\n    },\r\n    \"queries\": [\r\n        {\r\n            \"id\": \"TM-TSP-FI1056\",\r\n            \"interpolationType\": \"linear\",\r\n            \"shift\": \"0\"\r\n        }\r\n    ],\r\n    \"parameters\": {\r\n        \"numberOfIntervals\": \"150\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "HTTPS://sag-demo.trendminer.cloud/compute/newFocusChart",
+					"protocol": "HTTPS",
+					"host": [
+						"sag-demo",
+						"trendminer",
+						"cloud"
+					],
+					"path": [
+						"compute",
+						"newFocusChart"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "focusChart Power",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"timePeriod\": {\r\n        \"startDate\": \"2021-05-18T08:00:00.000Z\",\r\n        \"endDate\": \"2021-05-18T22:00:00.000Z\"\r\n    },\r\n    \"queries\": [\r\n        {\r\n            \"id\": \"[SD]power\",\r\n            \"interpolationType\": \"linear\",\r\n            \"shift\": \"0\"\r\n        }\r\n    ],\r\n    \"parameters\": {\r\n        \"numberOfIntervals\": \"150\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "HTTPS://sag-demo.trendminer.cloud/compute/newFocusChart",
+					"protocol": "HTTPS",
+					"host": [
+						"sag-demo",
+						"trendminer",
+						"cloud"
+					],
+					"path": [
+						"compute",
+						"newFocusChart"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -25,9 +25,11 @@ import { TrendminerChartWidget } from "./trendminer-chart-widget.component";
 import { NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 import { ChartsModule } from "ng2-charts";
+//import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from "@ng-select/ng-select";
 
 @NgModule({
-    imports: [CoreModule, HttpClientModule, ChartsModule],
+    imports: [CoreModule, HttpClientModule, ChartsModule, NgSelectModule],
     declarations: [TrendminerChartWidget, TrendminerChartWidgetConfig],
     entryComponents: [TrendminerChartWidget, TrendminerChartWidgetConfig],
     providers: [

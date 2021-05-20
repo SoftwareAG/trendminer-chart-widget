@@ -13,6 +13,8 @@ import { SensorPhoneModule } from "@c8y/ngx-components/sensor-phone";
 import { TrendminerChartWidgetConfig } from "./src/trendminer-chart-widget/trendminer-chart-widget.config.component";
 import { TrendminerChartWidget } from "./src/trendminer-chart-widget/trendminer-chart-widget.component";
 import { ChartsModule } from "ng2-charts";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from "@ng-select/ng-select";
 
 @NgModule({
     imports: [
@@ -27,7 +29,9 @@ import { ChartsModule } from "ng2-charts";
         CockpitDashboardModule,
         SensorPhoneModule,
         UpgradeModule,
-        ChartsModule
+        ChartsModule,
+        NgbModule,
+        NgSelectModule
     ],
     declarations: [TrendminerChartWidget, TrendminerChartWidgetConfig],
     entryComponents: [TrendminerChartWidget, TrendminerChartWidgetConfig],

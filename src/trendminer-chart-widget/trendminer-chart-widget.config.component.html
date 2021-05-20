@@ -1,17 +1,25 @@
-<ng-form #configForm="ngForm">
+<div>
 
-    <c8y-form-group>
-        <label for="TrendminerChartWidgetConfig">
-            TrendminerChartWidgetConfig Configuration
-        </label>
-    </c8y-form-group>
+    <label for="TrendminerChartWidgetConfig">
+        TrendminerChartWidgetConfig Configuration
+    </label>
+    <div class="row form-group">
+        <div class="col-lg-6">
+            <label class="label-with-help" for="TrendminerChartWidget-myValue">
+                <span class="help-icon">
+                    <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                         title="Select one or more time series for the chart.">
+                </span>
+                <ng-select class="form-control" [items]="items$ | async"
+                           bindLabel="name"
+                           bindValue="name"
+                           [closeOnSelect]="true"
+                           [multiple]="true"
+                           [hideSelected]="true"
+                           [typeahead]="input$">
+                </ng-select>
+            </label>
+        </div>
+    </div>
 
-    <c8y-form-group>
-        <label for="TrendminerChartWidget-myValue">
-            Simple Value
-        </label>
-        <input type="text" name="TrendminerChartWidget-myValue" id="TrendminerChartWidget-myValue" class="form-control bar-chart-control"
-            (change)="onConfigChanged($event)" [(ngModel)]="config.myValue" placeholder='val' />
-    </c8y-form-group>
-
-</ng-form>
+</div>
