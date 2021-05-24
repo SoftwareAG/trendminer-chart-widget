@@ -30,8 +30,8 @@ import { NgSelectModule } from "@ng-select/ng-select";
         SensorPhoneModule,
         UpgradeModule,
         ChartsModule,
-        NgbModule,
-        NgSelectModule
+        NgSelectModule,
+        NgbModule
     ],
     declarations: [TrendminerChartWidget, TrendminerChartWidgetConfig],
     entryComponents: [TrendminerChartWidget, TrendminerChartWidgetConfig],
