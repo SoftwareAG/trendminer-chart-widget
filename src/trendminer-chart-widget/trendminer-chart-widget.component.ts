@@ -25,7 +25,8 @@ import { ChartDataSets, ChartOptions, ChartPoint, ChartType } from "chart.js";
 import { ThemeService, BaseChartDirective, Label, Color } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
 import { DateTime } from 'luxon';
-import { Observable } from "rxjs";
+import { WidgetHelper } from "./widget-helper";
+import { WidgetConfig } from "./widget-config";
 
 @Component({
     selector: "lib-trendminer-chart-widget",
@@ -34,26 +35,26 @@ import { Observable } from "rxjs";
     providers: [ThemeService, TrendMinerService]
 })
 export class TrendminerChartWidget implements OnDestroy, OnInit {
-    widgetConfiguration: any;
+    widgetHelper: WidgetHelper<WidgetConfig>;
+
     sub: any;
     hasData: boolean = false;
     errorMessage: any;
 
-    @Input() set config(newConfig: any) {
-        this.widgetConfiguration = newConfig;
-    }
+    @Input() config;
 
     constructor(private realtime: Realtime, private invSvc: InventoryService, private trendminer: TrendMinerService) { }
 
 
 
     async ngOnInit(): Promise<void> {
+        this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
 
+        console.log(this.widgetHelper.getWidgetConfig());
+        let startDate = DateTime.fromObject(this.widgetHelper.getWidgetConfig().startDate);
+        let endDate = DateTime.fromObject(this.widgetHelper.getWidgetConfig().endDate);
 
-        let startDate = DateTime.fromISO(this.widgetConfiguration.startDate);
-        let endDate = DateTime.fromISO(this.widgetConfiguration.endDate);
-
-        this.sub = this.trendminer.getDataForId(startDate, endDate, this.widgetConfiguration['series']).subscribe(
+        this.sub = this.trendminer.getDataForId(startDate, endDate, this.widgetHelper.getWidgetConfig().series).subscribe(
             (data: any[]) => {
                 console.log("DATA", data);
                 data.forEach(element => {

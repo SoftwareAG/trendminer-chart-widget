@@ -45,7 +45,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
                 previewImage: require("~assets/img-preview.png"),
                 data: {
                     ng1: {
-                        options: { noDeviceTarget: false, noNewWidgets: false, deviceTargetNotRequired: false, groupsSelectable: true },
+                        options: { noDeviceTarget: true, noNewWidgets: false, deviceTargetNotRequired: true, groupsSelectable: true },
                     },
                 },
             },

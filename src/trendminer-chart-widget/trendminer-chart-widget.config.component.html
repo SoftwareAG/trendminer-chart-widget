@@ -18,7 +18,8 @@
                            [multiple]="true"
                            [hideSelected]="true"
                            [typeahead]="input$"
-                           [(ngModel)]="config.series">
+                           [(ngModel)]="widgetHelper.getWidgetConfig().series"
+                           (change)="onConfigChanged()">
                 </ng-select>
             </label>
         </div>
@@ -28,18 +29,20 @@
             <div class="input-group mb-1">
                 <div class="input-group-prepend">
                     <span class="input-group-text help-icon" id="basic-addon1">
-                        end date
+                        start date
                         <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
                              title="Select one or more time series for the chart.">
 
                     </span>
                 </div>
                 <input class="form-control" placeholder="yyyy-mm-dd"
-                       name="startDate" [(ngModel)]="startDate" ngbDatepicker #dStart="ngbDatepicker">
+                       name="startDate" [(ngModel)]="widgetHelper.getWidgetConfig().startDate" ngbDatepicker
+                       #dStart="ngbDatepicker" (change)="onConfigChanged()">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="dStart.toggle()" type="button"></button>
                 </div>
-                <ngb-timepicker [(ngModel)]="startTime"></ngb-timepicker>
+                <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().startTime"
+                                (change)="onConfigChanged()"></ngb-timepicker>
             </div>
 
         </div>
@@ -54,11 +57,13 @@
                     </span>
                 </div>
                 <input class="form-control" placeholder="yyyy-mm-dd"
-                       name="endDate" [(ngModel)]="endDate" ngbDatepicker #dEnd="ngbDatepicker">
+                       name="endDate" [(ngModel)]="widgetHelper.getWidgetConfig().endDate" ngbDatepicker
+                       #dEnd="ngbDatepicker" (change)="onConfigChanged()">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="dEnd.toggle()" type="button"></button>
                 </div>
-                <ngb-timepicker [(ngModel)]="endTime"></ngb-timepicker>
+                <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
+                                (change)="onConfigChanged()"></ngb-timepicker>
             </div>
 
         </div>
