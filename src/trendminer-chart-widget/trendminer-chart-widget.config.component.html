@@ -1,7 +1,7 @@
 <div class="configSection">
 
     <label for="TrendminerChartWidgetConfig">
-        TrendminerChartWidgetConfig Configuration
+        Trendminer Configuration
     </label>
     <div class="row form-group">
         <div class="col-lg-6">
@@ -24,48 +24,40 @@
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-lg-3">
-            <label class="label-with-help" for="TrendminerChartWidget-myValue">
-                start date
-                <span class="help-icon">
-                    <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
-                         title="Select one or more time series for the chart.">
-                </span>
-            </label>
-            <div class="input-group">
+        <div class="col-lg-6 col-layout">
+            <div class="input-group mb-1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text help-icon" id="basic-addon1">
+                        end date
+                        <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                             title="Select one or more time series for the chart.">
+
+                    </span>
+                </div>
                 <input class="form-control" placeholder="yyyy-mm-dd"
                        name="startDate" [(ngModel)]="startDate" ngbDatepicker #dStart="ngbDatepicker">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="dStart.toggle()" type="button"></button>
                 </div>
-            </div>
-
-        </div>
-        <div class="col-lg-3">
-            <div class="input-group">
                 <ngb-timepicker [(ngModel)]="startTime"></ngb-timepicker>
             </div>
 
         </div>
-        <div class="col-lg-3">
-            <label class="label-with-help" for="TrendminerChartWidget-myValue">
-                start date
-                <span class="help-icon">
-                    <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
-                         title="Select one or more time series for the chart.">
-                </span>
-            </label>
-            <div class="input-group">
+        <div class="col-lg-6 col-layout">
+            <div class="input-group mb-1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text help-icon" id="basic-addon1">
+                        end date
+                        <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                             title="Select one or more time series for the chart.">
+
+                    </span>
+                </div>
                 <input class="form-control" placeholder="yyyy-mm-dd"
                        name="endDate" [(ngModel)]="endDate" ngbDatepicker #dEnd="ngbDatepicker">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="dEnd.toggle()" type="button"></button>
                 </div>
-            </div>
-
-        </div>
-        <div class="col-lg-3">
-            <div class="input-group">
                 <ngb-timepicker [(ngModel)]="endTime"></ngb-timepicker>
             </div>
 
