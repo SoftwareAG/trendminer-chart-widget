@@ -1,10 +1,10 @@
 {
     "name": "trendminer-chart-widget",
-    "version": "1.0.10",
+    "version": "1.0.15",
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "c8ycli server",
+        "start": "c8ycli server -u https://industrysolutions.cumulocity.com",
         "build": "c8ycli build",
         "deploy": "c8ycli deploy",
         "buildRuntime": "gulp"
@@ -26,6 +26,9 @@
         "@c8y/ng1-modules": "1007.0.38",
         "@c8y/ngx-components": "1007.0.38",
         "@c8y/style": "1007.0.38",
+        "@fortawesome/angular-fontawesome": "^0.5.0",
+        "@fortawesome/fontawesome-svg-core": "^1.2.35",
+        "@fortawesome/free-solid-svg-icons": "^5.15.3",
         "@ng-bootstrap/ng-bootstrap": "^5.3.1",
         "@ng-select/ng-select": "^3.7.3",
         "angular": "1.6.9",
@@ -62,6 +65,7 @@
             "name": "cockpit",
             "contextPath": "cockpit",
             "key": "cockpit-application-key",
+            "brandingEntry": "styles/index.less",
             "tabsHorizontal": true,
             "upgrade": true,
             "rightDrawer": true,

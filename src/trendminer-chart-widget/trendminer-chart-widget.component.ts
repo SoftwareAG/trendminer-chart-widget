@@ -21,10 +21,11 @@
 
 import { Component, Input, OnDestroy, ViewChild, OnInit } from "@angular/core";
 import { Realtime, InventoryService } from "@c8y/client";
-import { ChartDataSets, ChartOptions, ChartType } from "chart.js";
+import { ChartDataSets, ChartOptions, ChartPoint, ChartType } from "chart.js";
 import { ThemeService, BaseChartDirective, Label, Color } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
 import { DateTime } from 'luxon';
+import { Observable } from "rxjs";
 
 @Component({
     selector: "lib-trendminer-chart-widget",
@@ -34,6 +35,9 @@ import { DateTime } from 'luxon';
 })
 export class TrendminerChartWidget implements OnDestroy, OnInit {
     widgetConfiguration: any;
+    sub: any;
+    hasData: boolean = false;
+    errorMessage: any;
 
     @Input() set config(newConfig: any) {
         this.widgetConfiguration = newConfig;
@@ -41,23 +45,41 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
     constructor(private realtime: Realtime, private invSvc: InventoryService, private trendminer: TrendMinerService) { }
 
+
+
     async ngOnInit(): Promise<void> {
-        let data: any = this.trendminer.getDataForId(["TM-TSP-FI1056", "[SD]power"]);
-        data.forEach(element => {
-            let name = element.tag.id;
-            let labels = element.values.map(v => DateTime.fromISO(v.ts).toLocaleString());
-            let vals = element.values.map(v => v.value);
-            this.lineChartData.push({ data: vals, label: name, yAxisID: `y-${element.tag.id}` });
-            this.lineChartLabels = labels;
-            this.lineChartOptions.scales.yAxes.push({
-                id: `y-${element.tag.id}`,
-                position: 'left',
+
+
+        let startDate = DateTime.fromISO(this.widgetConfiguration.startDate);
+        let endDate = DateTime.fromISO(this.widgetConfiguration.endDate);
+
+        this.sub = this.trendminer.getDataForId(startDate, endDate, this.widgetConfiguration['series']).subscribe(
+            (data: any[]) => {
+                console.log("DATA", data);
+                data.forEach(element => {
+                    let name = element.tag.id;
+                    //let labels: Date[] = element.values;//.map(v => DateTime.fromISO(v.ts).toLocaleString());
+                    let vals: ChartPoint[] = element.values.map(v => { return { x: Date.parse(v.ts), y: v.value }; });
+                    if (vals.length) {
+                        console.log("vals", vals);
+                        this.lineChartData.push({ data: [...vals], label: name, yAxisID: `y-${element.tag.id}`, pointRadius: 0 });
+                        // this.lineChartLabels = [...new Set([...labels.map(d => d.toString()), this.lineChartLabels.map(d => d.toString())])];
+                        this.lineChartOptions.scales.yAxes.push({
+                            id: `y-${element.tag.id}`,
+                            position: 'left',
+                        },
+                        );
+                    }
+                });
+                this.hasData = this.lineChartData.length > 0;
             },
-            );
-        });
+            error => this.errorMessage = error
+        );
     }
 
-    ngOnDestroy(): void { }
+    ngOnDestroy(): void {
+        this.sub.unsubscribe();
+    }
 
 
     public lineChartData: ChartDataSets[] = [];
@@ -67,7 +89,14 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         responsive: true,
         scales: {
             // We use this empty structure as a placeholder for dynamic theming.
-            xAxes: [{}],
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'day'
+                },
+                display: true,
+                scaleLabel: { labelString: "Date" },
+            }],
             yAxes: [
                 // {
                 //     id: 'y-axis-1',

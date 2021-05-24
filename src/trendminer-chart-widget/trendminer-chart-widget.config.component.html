@@ -10,13 +10,15 @@
                     <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
                          title="Select one or more time series for the chart.">
                 </span>
-                <ng-select class="form-control" [items]="items$ | async"
+                <ng-select class="form-control"
+                           [items]="items$ | async"
                            bindLabel="name"
                            bindValue="name"
                            [closeOnSelect]="true"
                            [multiple]="true"
                            [hideSelected]="true"
-                           [typeahead]="input$">
+                           [typeahead]="input$"
+                           [(ngModel)]="config.series">
                 </ng-select>
             </label>
         </div>

@@ -42,7 +42,7 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
         }));
 
         this.items$ = this.input$.pipe(
-            map((term) => this.trendminer.searchIds(term))
+            switchMap((term) => this.trendminer.searchIds(term))
         );
 
     }
