@@ -3,7 +3,7 @@
     "contextPath": "trendminer-chart-widget",
     "key": "trendminer-chart-widget-application-key",
     "contentSecurityPolicy": "default-src 'self'",
-    "description": "DESCRIPTION FOR TrendminerChartWidget",
+    "description": "Widget for charting trendminer series in Cumulocity",
     "icon": {
         "class": "fa fw fa-area-chart"
     },

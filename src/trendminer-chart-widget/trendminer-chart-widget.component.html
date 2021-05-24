@@ -1,18 +1,13 @@
-<div class="trendminer-chart-widget-container">
-    <ng-container *ngIf="hasData else noshow">
-        <!--                
-            [labels]="lineChartLabels"
-        -->
-        <canvas #graph baseChart
-                [datasets]="lineChartData"
-                [options]="lineChartOptions"
-                [colors]="lineChartColors"
-                [legend]="lineChartLegend"
-                [chartType]="lineChartType"></canvas>
-    </ng-container>
-    <ng-template #noshow>
-        <div class="spinner-snake text-primary" role="status">
-            <span class="sr-only">Loading... {{errorMessage | json}}</span>
-        </div>
-    </ng-template>
+<div class="trendminer-chart-widget-container" *ngIf="hasData else noshow">
+    <canvas #graph baseChart
+            [datasets]="lineChartData"
+            [options]="lineChartOptions"
+            [colors]="lineChartColors"
+            [legend]="lineChartLegend"
+            [chartType]="lineChartType"></canvas>
 </div>
+<ng-template #noshow>
+    <div class="spinner-snake text-primary" role="status">
+        <span class="sr-only">Loading... {{errorMessage | json}}</span>
+    </div>
+</ng-template>
