@@ -1,6 +1,7 @@
 /** @format */
 
-import { NgbDateStruct, NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap";
+//import { NgbDateStruct, NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap";
+import { ChartOptions } from 'chart.js';
 import { DateTime } from 'luxon';
 
 
@@ -25,6 +26,43 @@ interface SeriesDetail {
 export class WidgetConfig {
 
     /**
+     * The Chart basic options 
+     */
+
+    public chartConfig : (ChartOptions & { annotation: any; }) = {
+    responsive: true,
+    scales: {
+        // We use this empty structure as a placeholder for dynamic theming.
+        xAxes: [{
+            type: 'time',
+            time: {
+                unit: 'hour'
+            },
+            display: true,
+            scaleLabel: { labelString: "Date" },
+        }],
+        yAxes: []
+    },
+    annotation: {
+        annotations: [
+            {
+                type: 'line',
+                mode: 'vertical',
+                scaleID: 'x-axis-0',
+                value: '2021-05-23',
+                borderColor: 'orange',
+                borderWidth: 2,
+                label: {
+                    enabled: true,
+                    fontColor: 'orange',
+                    content: 'Low Power'
+                }
+            },
+        ],
+    },
+};
+
+    /**
          * Default colours so we have a set of main
          * and aggregate colors.
          */
@@ -43,10 +81,10 @@ export class WidgetConfig {
         "#FFFF00",
     ];
 
-    startDate: NgbDateStruct;
-    endDate: NgbDateStruct;
-    startTime: NgbTimeStruct;
-    endTime: NgbTimeStruct;
+    startDate: string;
+    endDate: string;
+    startTime: string;
+    endTime: string;
     series: { [key: string]: SeriesDetail; } = {};
     seriesNames: any[];
     colours: string[];
@@ -65,12 +103,12 @@ export class WidgetConfig {
     constructor() {
         this.series = {};
         this.seriesNames = [];
-        let dEnd = DateTime.now();
-        let dStart = dEnd.plus({ days: -5 });
-        this.startDate = { year: dStart.year, month: dStart.month, day: dStart.day };
-        this.startTime = { hour: dStart.hour, minute: dStart.minute, second: 0 };
-        this.endDate = { year: dEnd.year, month: dEnd.month, day: dEnd.day };
-        this.endTime = { hour: dEnd.hour, minute: dEnd.minute, second: 0 };
+        let dEnd: DateTime = DateTime.now();
+        let dStart: DateTime = dEnd.plus({ days: -5 });
+        this.startDate = dStart.toISODate();
+        this.endDate = dEnd.toISODate();
+        this.startTime = dStart.toLocaleString(DateTime.TIME_24_SIMPLE);
+        this.endTime = dEnd.toLocaleString(DateTime.TIME_24_SIMPLE);
         this.fillArea = false;
         this.fitAxis = false;
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';

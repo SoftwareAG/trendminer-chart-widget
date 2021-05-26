@@ -25,7 +25,7 @@ import { Chart, ChartDataSets, ChartOptions, ChartPoint, ChartType } from "chart
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { ThemeService, BaseChartDirective, Label, Color } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
-import { DateTime } from 'luxon';
+import { DateTime, Interval, DurationUnit, DurationObjectUnits } from 'luxon';
 import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
 
@@ -45,6 +45,12 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
     errorMessage: any;
 
     @Input() config;
+    /**
+     * Gain access to chart object so we can call update
+     * under certain circumstance
+     */
+    @ViewChild(BaseChartDirective, { static: false })
+    chartElement: BaseChartDirective;
 
     constructor(private realtime: Realtime, private invSvc: InventoryService, private trendminer: TrendMinerService) { }
 
@@ -53,11 +59,32 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
     async ngOnInit(): Promise<void> {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
 
-        console.log(this.widgetHelper.getWidgetConfig());
-        let startDate = DateTime.fromObject(this.widgetHelper.getWidgetConfig().startDate);
-        let endDate = DateTime.fromObject(this.widgetHelper.getWidgetConfig().endDate);
+        this.lineChartOptions = this.widgetHelper.getWidgetConfig().chartConfig;
 
-        this.sub = this.trendminer.getDataForId(this.widgetHelper.getWidgetConfig().proxy, startDate, endDate, this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
+        console.log(this.widgetHelper.getWidgetConfig());
+
+        let startDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}`);
+        let endDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}`);
+
+        let i = Interval.fromDateTimes(startDate, endDate);
+
+
+        let units = ["second", "minute", "hour", "day", "week", "month", "year"];
+
+        let filtered = units.reduce((acc: string, u: string) => {
+            let test = i.length(<DurationUnit>`${u}s`);
+            if (test >= 1 && test < i.length(<DurationUnit>acc)) {
+                acc = u;
+            }
+            return acc;
+        }, "seconds");
+
+        this.widgetHelper.getWidgetConfig().chartConfig.scales.xAxes[0].time.unit = <Chart.TimeUnit>filtered;
+        let period_len = i.length("days");
+
+        console.log("FILTERED", filtered);
+
+        this.sub = this.trendminer.getDataForId(this.widgetHelper.getWidgetConfig().proxy, startDate.toISO(), endDate.toISO(), this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
             (data: any[]) => {
                 this.lineChartData = [];
                 data.forEach(element => {
@@ -79,7 +106,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                         };
                         this.lineChartData.push(chartSeries);
                         // this.lineChartLabels = [...new Set([...labels.map(d => d.toString()), this.lineChartLabels.map(d => d.toString())])];
-                        this.lineChartOptions.scales.yAxes.push({
+                        this.widgetHelper.getWidgetConfig().chartConfig.scales.yAxes.push({
                             id: `y-${element.tag.id}`,
                             position: 'left',
                         },
@@ -99,75 +126,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
     public lineChartData: ChartDataSets[] = [];
     public lineChartLabels: Label[] = [];
-    public lineChartOptions: (ChartOptions & { annotation: any; }) = {
-        responsive: true,
-        scales: {
-            // We use this empty structure as a placeholder for dynamic theming.
-            xAxes: [{
-                type: 'time',
-                time: {
-                    unit: 'day'
-                },
-                display: true,
-                scaleLabel: { labelString: "Date" },
-            }],
-            yAxes: [
-                // {
-                //     id: 'y-axis-1',
-                //     position: 'right',
-                //     gridLines: {
-                //         color: 'rgba(255,0,0,0.3)',
-                //     },
-                //     ticks: {
-                //         fontColor: 'red',
-                //     }
-                // }
-            ]
-        },
-        annotation: {
-            annotations: [
-                {
-                    type: 'line',
-                    mode: 'vertical',
-                    scaleID: 'x-axis-0',
-                    value: '2021-05-23',
-                    borderColor: 'orange',
-                    borderWidth: 2,
-                    label: {
-                        enabled: true,
-                        fontColor: 'orange',
-                        content: 'Low Power'
-                    }
-                },
-            ],
-        },
-    };
-    public lineChartColors: Color[] = [
-        { // grey
-            backgroundColor: 'rgba(148,159,177,0.2)',
-            borderColor: 'rgba(148,159,177,1)',
-            pointBackgroundColor: 'rgba(148,159,177,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-        },
-        { // dark grey
-            backgroundColor: 'rgba(77,83,96,0.2)',
-            borderColor: 'rgba(77,83,96,1)',
-            pointBackgroundColor: 'rgba(77,83,96,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(77,83,96,1)'
-        },
-        { // red
-            backgroundColor: 'rgba(255,0,0,0.3)',
-            borderColor: 'red',
-            pointBackgroundColor: 'rgba(148,159,177,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-        }
-    ];
+    public lineChartOptions: ChartOptions;
     public lineChartLegend = true;
     public lineChartType: ChartType = 'line';
 

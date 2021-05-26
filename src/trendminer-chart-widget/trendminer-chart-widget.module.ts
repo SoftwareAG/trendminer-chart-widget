@@ -27,9 +27,10 @@ import { HttpClientModule } from "@angular/common/http";
 import { ChartsModule } from "ng2-charts";
 import { NgSelectModule } from "@ng-select/ng-select";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
-    imports: [CoreModule, HttpClientModule, ChartsModule, NgSelectModule, NgbModule],
+    imports: [CoreModule, HttpClientModule, ChartsModule, NgSelectModule, NgbModule, FontAwesomeModule],
     declarations: [TrendminerChartWidget, TrendminerChartWidgetConfig],
     entryComponents: [TrendminerChartWidget, TrendminerChartWidgetConfig],
     providers: [

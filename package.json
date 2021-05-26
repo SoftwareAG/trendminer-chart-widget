@@ -46,6 +46,7 @@
         "@angular/compiler-cli": "8.2.13",
         "@angular/language-service": "8.2.13",
         "@c8y/cli": "1007.0.38",
+        "@types/luxon": "^1.26.5",
         "caniuse-lite": "^1.0.30001228",
         "css-loader": "^3.5.3",
         "gulp": "^4.0.2",

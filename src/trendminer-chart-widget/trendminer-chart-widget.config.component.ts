@@ -21,13 +21,15 @@ import { switchMap } from 'rxjs/operators';
 import { TrendMinerService } from "./trendminer-service";
 import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
-import { NgbDatepicker } from "@ng-bootstrap/ng-bootstrap";
+import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 @Component({
     selector: "trendminer-chart-widget-config-component",
     templateUrl: "./trendminer-chart-widget.config.component.html",
     styleUrls: ["./trendminer-chart-widget.config.component.css"],
 })
 export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
+
+    calendarIcon = faCalendarAlt;
 
     widgetHelper: WidgetHelper<WidgetConfig>;
     sublist = [];

@@ -15,7 +15,7 @@ import { TrendminerChartWidget } from "./src/trendminer-chart-widget/trendminer-
 import { ChartsModule } from "ng2-charts";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from "@ng-select/ng-select";
-
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 @NgModule({
     imports: [
         BrowserAnimationsModule,
@@ -31,7 +31,8 @@ import { NgSelectModule } from "@ng-select/ng-select";
         UpgradeModule,
         ChartsModule,
         NgSelectModule,
-        NgbModule
+        NgbModule,
+        FontAwesomeModule
     ],
     declarations: [TrendminerChartWidget, TrendminerChartWidgetConfig],
     entryComponents: [TrendminerChartWidget, TrendminerChartWidgetConfig],

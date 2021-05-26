@@ -4,7 +4,8 @@
             Trendminer Configuration
         </label>
         <!-- 
-            https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/
+            Basic config for tren miner access - for example basic url (proxy or direct) 
+            timeseries to show, dates etc...
         -->
         <div class="col-lg-12 col-layout">
             <div class="input-group mb-1">
@@ -19,8 +20,10 @@
                 <input class="form-control" type="text"
                        name="proxy" [(ngModel)]="widgetHelper.getWidgetConfig().proxy" (change)="onConfigChanged()">
             </div>
-
         </div>
+        <!-- 
+            time series selection
+        -->
         <div class="row form-group">
             <div class="col-lg-6">
                 <label class="label-with-help" for="TrendminerChartWidget-myValue">
@@ -42,7 +45,9 @@
                 </label>
             </div>
         </div>
-
+        <!-- 
+            Date ranges
+        -->
         <div class="row form-group">
             <div class="col-lg-6 col-layout">
                 <div class="input-group mb-1">
@@ -54,14 +59,14 @@
 
                         </span>
                     </div>
-                    <input class="form-control" placeholder="yyyy-mm-dd"
-                           name="startDate" [(ngModel)]="widgetHelper.getWidgetConfig().startDate" ngbDatepicker
-                           #dStart="ngbDatepicker" (change)="onConfigChanged()">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" (click)="dStart.toggle()" type="button"></button>
-                    </div>
-                    <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().startTime"
-                                    (change)="onConfigChanged()"></ngb-timepicker>
+                    <input class="form-control" type="date" id="startDate" name="startDate"
+                           value="widgetHelper.getWidgetConfig().startDate"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().startDate"
+                           (change)="onConfigChanged()">
+                    <input class="form-control" type="time" id="startTime" name="startTime"
+                           value="widgetHelper.getWidgetConfig().startTime"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().startTime"
+                           (change)="onConfigChanged()">
                 </div>
 
             </div>
@@ -75,14 +80,13 @@
 
                         </span>
                     </div>
-                    <input class="form-control" placeholder="yyyy-mm-dd"
-                           name="endDate" [(ngModel)]="widgetHelper.getWidgetConfig().endDate" ngbDatepicker
-                           #dEnd="ngbDatepicker" (change)="onConfigChanged()">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" (click)="dEnd.toggle()" type="button"></button>
-                    </div>
-                    <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
-                                    (change)="onConfigChanged()"></ngb-timepicker>
+                    <input class="form-control" type="date" id="endDate" name="endDate"
+                           value="widgetHelper.getWidgetConfig().endDate"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().endDate" (change)="onConfigChanged()">
+                    <input class="form-control" type="time" id="endTime" name="endTime"
+                           value="widgetHelper.getWidgetConfig().endTime"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
+                           (change)="onConfigChanged()">
                 </div>
 
             </div>
@@ -91,7 +95,9 @@
 
     </div>
 
-    <!-- next section chart details -->
+    <!-- 
+        next section chart details 
+    -->
     <ng-container *ngIf="widgetHelper.getWidgetConfig().hasSeries()">
         <div class="configSection">
             <label for="TrendminerChartWidgetConfig">

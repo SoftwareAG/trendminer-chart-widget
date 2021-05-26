@@ -97,15 +97,15 @@ export class TrendMinerService {
         return this.http.post(sUrl, bodyVal);
     }
 
-    getDataForId(baseURL: string, startDate: DateTime, endDate: DateTime, ids: string[], intervals: number = 150, shiftVal: number = 0) {
+    getDataForId(baseURL: string, startDate: string, endDate: string, ids: string[], intervals: number = 150, shiftVal: number = 0) {
 
         let sUrl = `${baseURL}/compute/newFocusChart`;
 
         let bodyVal = {
             "request": {
                 "timePeriod": {
-                    "startDate": `${startDate.toISO()} `,//"2019-05-04T16:30:00.000Z",
-                    "endDate": `${endDate.toISO()} `,//"2019-05-04T22:00:00.000Z"
+                    "startDate": `${startDate} `,//"2019-05-04T16:30:00.000Z",
+                    "endDate": `${endDate} `,//"2019-05-04T22:00:00.000Z"
                 },
                 "queries": [],
                 "parameters": {

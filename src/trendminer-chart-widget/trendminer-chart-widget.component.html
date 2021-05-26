@@ -1,12 +1,24 @@
-<div class="trendminer-chart-widget-container" *ngIf="hasData else noshow">
-    <canvas #graph baseChart
-            [datasets]="lineChartData"
-            [options]="lineChartOptions"
-            [legend]="lineChartLegend"
-            [chartType]="lineChartType"></canvas>
+<div class="trendminer-chart-widget-container">
+    <ng-container *ngIf="hasData else noshow">
+        <div style="float: right; margin-right: 10px;">
+            <!-- <button type="button" class="btn btn-link c8y-realtime" title="Toggle realtime" (click)="toggle()">
+                                            <span [ngClass]="realtimeState?'c8y-pulse active' : 'c8y-pulse inactive'"></span>
+                                            <span>Realtime</span>
+                                        </button> -->
+            <!--mat-icon-button-->
+            <button style="color:#1776BF;" type="button" class="button" (click)="refresh(this)"><span
+                      class="fa fa-refresh"></span></button>
+        </div>
+
+        <canvas #graph baseChart
+                [datasets]="lineChartData"
+                [options]="lineChartOptions"
+                [legend]="lineChartLegend"
+                [chartType]="lineChartType"></canvas>
+    </ng-container>
+    <ng-template #noshow>
+        <div class="spinner-snake text-primary" role="status">
+            <span class="sr-only">Loading... {{errorMessage | json}}</span>
+        </div>
+    </ng-template>
 </div>
-<ng-template #noshow>
-    <div class="spinner-snake text-primary" role="status">
-        <span class="sr-only">Loading... {{errorMessage | json}}</span>
-    </div>
-</ng-template>
