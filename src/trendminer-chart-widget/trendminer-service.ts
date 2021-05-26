@@ -127,7 +127,7 @@ export class TrendMinerService {
     }
 
     searchIds(baseURL: string, searchTerm: string) {
-        let sUrl = `${baseURL} /ds/timeseries / search ? page = 0 & size=20 & sort=name % 2Casc`;
+        let sUrl = `${baseURL}/ds/timeseries/search?page=0&size=20&sort=name%2Casc`;
         let bodyVal = {
             "request":
             {

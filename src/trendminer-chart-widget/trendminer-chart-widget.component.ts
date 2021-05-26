@@ -59,7 +59,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
         this.sub = this.trendminer.getDataForId(this.widgetHelper.getWidgetConfig().proxy, startDate, endDate, this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
             (data: any[]) => {
-                console.log("DATA", data);
+                this.lineChartData = [];
                 data.forEach(element => {
                     let name = element.tag.id;
                     //let labels: Date[] = element.values;//.map(v => DateTime.fromISO(v.ts).toLocaleString());
@@ -77,8 +77,6 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                             pointBackgroundColor: this.widgetHelper.getWidgetConfig().series[name].color,
 
                         };
-                        console.log("ADDING", chartSeries);
-
                         this.lineChartData.push(chartSeries);
                         // this.lineChartLabels = [...new Set([...labels.map(d => d.toString()), this.lineChartLabels.map(d => d.toString())])];
                         this.lineChartOptions.scales.yAxes.push({

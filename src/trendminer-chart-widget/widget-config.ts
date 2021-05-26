@@ -95,7 +95,7 @@ export class WidgetConfig {
             let temp = this.series;
             this.series = {};
             this.seriesNames.forEach((selected) => {
-                if (temp[selected]) this.series[selected] = temp[selected];
+                if (selected.name in temp) this.series[selected.name] = temp[selected.name];
             });
         }
     }
