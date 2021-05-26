@@ -1,73 +1,153 @@
-<div class="configSection">
+<div>
+    <div class="configSection">
+        <label for="TrendminerChartWidgetConfig">
+            Trendminer Configuration
+        </label>
+        <!-- 
+            https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/
+        -->
+        <div class="col-lg-12 col-layout">
+            <div class="input-group mb-1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text help-icon" id="basic-addon1">
+                        Address
+                        <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                             title="enter the proxy prefix for api calls to trendminer .">
 
-    <label for="TrendminerChartWidgetConfig">
-        Trendminer Configuration
-    </label>
-    <div class="row form-group">
-        <div class="col-lg-6">
-            <label class="label-with-help" for="TrendminerChartWidget-myValue">
-                select one or more series to chart
-                <span class="help-icon">
-                    <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
-                         title="Select one or more time series for the chart.">
-                </span>
-                <ng-select [items]="items$ | async"
-                           bindLabel="name"
-                           bindValue="name"
-                           [closeOnSelect]="true"
-                           [multiple]="true"
-                           [hideSelected]="true"
-                           [typeahead]="input$"
-                           [(ngModel)]="widgetHelper.getWidgetConfig().series"
-                           (change)="onConfigChanged()">
-                </ng-select>
+                    </span>
+                </div>
+                <input class="form-control" type="text"
+                       name="proxy" [(ngModel)]="widgetHelper.getWidgetConfig().proxy" (change)="onConfigChanged()">
+            </div>
+
+        </div>
+        <div class="row form-group">
+            <div class="col-lg-6">
+                <label class="label-with-help" for="TrendminerChartWidget-myValue">
+                    select one or more series to chart
+                    <span class="help-icon">
+                        <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                             title="Select one or more time series for the chart.">
+                    </span>
+                    <ng-select
+                               [items]="items$ | async"
+                               bindLabel="name"
+                               [closeOnSelect]="true"
+                               [multiple]="true"
+                               [hideSelected]="true"
+                               [typeahead]="input$"
+                               [(ngModel)]="widgetHelper.getWidgetConfig().seriesNames"
+                               (change)="onConfigChanged()">
+                    </ng-select>
+                </label>
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-lg-6 col-layout">
+                <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text help-icon" id="basic-addon1">
+                            start date
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Select one or more time series for the chart.">
+
+                        </span>
+                    </div>
+                    <input class="form-control" placeholder="yyyy-mm-dd"
+                           name="startDate" [(ngModel)]="widgetHelper.getWidgetConfig().startDate" ngbDatepicker
+                           #dStart="ngbDatepicker" (change)="onConfigChanged()">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="dStart.toggle()" type="button"></button>
+                    </div>
+                    <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().startTime"
+                                    (change)="onConfigChanged()"></ngb-timepicker>
+                </div>
+
+            </div>
+            <div class="col-lg-6 col-layout">
+                <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text help-icon" id="basic-addon1">
+                            end date
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Select one or more time series for the chart.">
+
+                        </span>
+                    </div>
+                    <input class="form-control" placeholder="yyyy-mm-dd"
+                           name="endDate" [(ngModel)]="widgetHelper.getWidgetConfig().endDate" ngbDatepicker
+                           #dEnd="ngbDatepicker" (change)="onConfigChanged()">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" (click)="dEnd.toggle()" type="button"></button>
+                    </div>
+                    <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
+                                    (change)="onConfigChanged()"></ngb-timepicker>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- next section chart details -->
+    <ng-container *ngIf="widgetHelper.getWidgetConfig().hasSeries()">
+        <div class="configSection">
+            <label for="TrendminerChartWidgetConfig">
+                Chart Options
             </label>
-        </div>
-    </div>
-    <div class="row form-group">
-        <div class="col-lg-6 col-layout">
-            <div class="input-group mb-1">
-                <div class="input-group-prepend">
-                    <span class="input-group-text help-icon" id="basic-addon1">
-                        start date
-                        <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
-                             title="Select one or more time series for the chart.">
+            <div class="row">
+                <!-- Fill under line -->
+                <div class="form-check-inline col-lg-2">
+                    <label class="label-with-help" class="form-check-label" for="fillArea" translate>
+                        <input class="form-check-input" type="checkbox" name="fillArea"
+                               [(ngModel)]="widgetHelper.getWidgetConfig().fillArea"
+                               (ngModelChange)="onConfigChanged()" /> Fill area<span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Fill the area under the line with the color of the series.">
+                        </span>
+                    </label>
+                </div>
 
-                    </span>
+                <!-- fit Y axis -->
+                <div class="form-check-inline col-lg-2">
+                    <label class="label-with-help" class="form-check-label" for="beginAtZero2" translate>
+                        <input class="form-check-input" type="checkbox" name="beginAtZero2"
+                               [(ngModel)]="widgetHelper.getWidgetConfig().fitAxis"
+                               (ngModelChange)="onConfigChanged()" /> Fit axes<span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Fit the range of the chart axes to the data.">
+                        </span>
+                    </label>
                 </div>
-                <input class="form-control" placeholder="yyyy-mm-dd"
-                       name="startDate" [(ngModel)]="widgetHelper.getWidgetConfig().startDate" ngbDatepicker
-                       #dStart="ngbDatepicker" (change)="onConfigChanged()">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" (click)="dStart.toggle()" type="button"></button>
-                </div>
-                <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().startTime"
-                                (change)="onConfigChanged()"></ngb-timepicker>
             </div>
-
         </div>
-        <div class="col-lg-6 col-layout">
-            <div class="input-group mb-1">
-                <div class="input-group-prepend">
-                    <span class="input-group-text help-icon" id="basic-addon1">
-                        end date
-                        <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
-                             title="Select one or more time series for the chart.">
+    </ng-container>
 
-                    </span>
-                </div>
-                <input class="form-control" placeholder="yyyy-mm-dd"
-                       name="endDate" [(ngModel)]="widgetHelper.getWidgetConfig().endDate" ngbDatepicker
-                       #dEnd="ngbDatepicker" (change)="onConfigChanged()">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" (click)="dEnd.toggle()" type="button"></button>
-                </div>
-                <ngb-timepicker [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
-                                (change)="onConfigChanged()"></ngb-timepicker>
-            </div>
+    <!-- next section series details -->
+    <ng-container *ngIf="widgetHelper.getWidgetConfig().hasSeries()">
+        <div class="configSection">
+            <label for="TrendminerChartWidgetConfig">
+                Series Options
+            </label>
 
+            <!-- Each series -->
+            <ng-container *ngFor="let seriesKey of widgetHelper.getWidgetConfig().seriesKeys()">
+                <!-- color -->
+                <div class="row">
+                    <div class=" col-lg-3">
+
+                        <label for="TrendminerChartWidgetConfig">
+                            {{seriesKey}}
+                        </label>
+                        <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
+                               [(ngModel)]="widgetHelper.getWidgetConfig().series[seriesKey].color"
+                               [value]="widgetHelper.getWidgetConfig().series[seriesKey].color"
+                               (ngModelChange)="onConfigChanged()" />
+                    </div>
+                </div>
+            </ng-container>
         </div>
-
-    </div>
-
+    </ng-container>
 </div>

@@ -21,12 +21,15 @@
 
 import { Component, Input, OnDestroy, ViewChild, OnInit } from "@angular/core";
 import { Realtime, InventoryService } from "@c8y/client";
-import { ChartDataSets, ChartOptions, ChartPoint, ChartType } from "chart.js";
+import { Chart, ChartDataSets, ChartOptions, ChartPoint, ChartType } from "chart.js";
+import annotationPlugin from 'chartjs-plugin-annotation';
 import { ThemeService, BaseChartDirective, Label, Color } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
 import { DateTime } from 'luxon';
 import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
+
+Chart.pluginService.register(annotationPlugin);
 
 @Component({
     selector: "lib-trendminer-chart-widget",
@@ -54,7 +57,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         let startDate = DateTime.fromObject(this.widgetHelper.getWidgetConfig().startDate);
         let endDate = DateTime.fromObject(this.widgetHelper.getWidgetConfig().endDate);
 
-        this.sub = this.trendminer.getDataForId(startDate, endDate, this.widgetHelper.getWidgetConfig().series).subscribe(
+        this.sub = this.trendminer.getDataForId(this.widgetHelper.getWidgetConfig().proxy, startDate, endDate, this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
             (data: any[]) => {
                 console.log("DATA", data);
                 data.forEach(element => {
@@ -62,8 +65,21 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                     //let labels: Date[] = element.values;//.map(v => DateTime.fromISO(v.ts).toLocaleString());
                     let vals: ChartPoint[] = element.values.map(v => { return { x: Date.parse(v.ts), y: v.value }; });
                     if (vals.length) {
-                        console.log("vals", vals);
-                        this.lineChartData.push({ data: [...vals], label: name, yAxisID: `y-${element.tag.id}`, pointRadius: 0 });
+                        let chartSeries = {
+                            data: [...vals],
+                            label: name,
+                            yAxisID: `y-${element.tag.id}`,
+                            pointRadius: 0,
+                            fill: this.widgetHelper.getWidgetConfig().fillArea,
+                            spanGaps: true,
+                            backgroundColor: this.widgetHelper.getWidgetConfig().series[name].color,
+                            borderColor: this.widgetHelper.getWidgetConfig().series[name].color,
+                            pointBackgroundColor: this.widgetHelper.getWidgetConfig().series[name].color,
+
+                        };
+                        console.log("ADDING", chartSeries);
+
+                        this.lineChartData.push(chartSeries);
                         // this.lineChartLabels = [...new Set([...labels.map(d => d.toString()), this.lineChartLabels.map(d => d.toString())])];
                         this.lineChartOptions.scales.yAxes.push({
                             id: `y-${element.tag.id}`,
@@ -85,8 +101,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
     public lineChartData: ChartDataSets[] = [];
     public lineChartLabels: Label[] = [];
-    public lineChartOptions: ChartOptions = {
-        //        public lineChartOptions: (ChartOptions & { annotation: any; }) = {
+    public lineChartOptions: (ChartOptions & { annotation: any; }) = {
         responsive: true,
         scales: {
             // We use this empty structure as a placeholder for dynamic theming.
@@ -111,23 +126,23 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                 // }
             ]
         },
-        // annotation: {
-        //     annotations: [
-        //         {
-        //             type: 'line',
-        //             mode: 'vertical',
-        //             scaleID: 'x-axis-0',
-        //             value: 'March',
-        //             borderColor: 'orange',
-        //             borderWidth: 2,
-        //             label: {
-        //                 enabled: true,
-        //                 fontColor: 'orange',
-        //                 content: 'LineAnno'
-        //             }
-        //         },
-        //     ],
-        // },
+        annotation: {
+            annotations: [
+                {
+                    type: 'line',
+                    mode: 'vertical',
+                    scaleID: 'x-axis-0',
+                    value: '2021-05-23',
+                    borderColor: 'orange',
+                    borderWidth: 2,
+                    label: {
+                        enabled: true,
+                        fontColor: 'orange',
+                        content: 'Low Power'
+                    }
+                },
+            ],
+        },
     };
     public lineChartColors: Color[] = [
         { // grey

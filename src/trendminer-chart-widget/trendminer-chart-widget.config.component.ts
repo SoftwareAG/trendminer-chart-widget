@@ -46,32 +46,11 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
         }));
 
         this.items$ = this.input$.pipe(
-            switchMap((term) => this.trendminer.searchIds(term))
+            switchMap((term) => this.trendminer.searchIds(this.widgetHelper.getWidgetConfig().proxy, term))
         );
 
     }
-    // onDateSelection(date: NgbDate) {
-    //     if (!this.fromDate && !this.toDate) {
-    //         this.fromDate = date;
-    //     } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
-    //         this.toDate = date;
-    //     } else {
-    //         this.toDate = null;
-    //         this.fromDate = date;
-    //     }
-    // }
 
-    // isHovered(date: NgbDate) {
-    //     return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
-    // }
-
-    // isInside(date: NgbDate) {
-    //     return this.toDate && date.after(this.fromDate) && date.before(this.toDate);
-    // }
-
-    // isRange(date: NgbDate) {
-    //     return date.equals(this.fromDate) || (this.toDate && date.equals(this.toDate)) || this.isInside(date) || this.isHovered(date);
-    // }
     ngOnInit(): void {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
     }
@@ -83,31 +62,24 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
 
     onConfigChanged(): void {
         console.log("CONFIG-CHANGED");
+
+        //deselect any that were deselected
+        this.widgetHelper.getWidgetConfig().clearSeries();
+
+        //should only add the new series
+        this.widgetHelper.getWidgetConfig().seriesNames.forEach((v, i) => {
+            console.log("Adding", v);
+            this.widgetHelper
+                .getWidgetConfig()
+                .addSeries(
+                    v.id,
+                    v.name,
+                    this.widgetHelper.getWidgetConfig().colorList[i],
+                    false
+                );
+        });
+
         this.widgetHelper.setWidgetConfig(this.config);
     }
 
-    // search = (text$: Observable<string>) =>
-    //     text$.pipe(
-    //         debounceTime(200),
-    //         distinctUntilChanged(),
-    //         map(term => term.length < 2 ? []
-    //             : this.trendminer.searchIds(term))
-    //     );
-
-
-    // selected($e) {
-    //     $e.preventDefault();
-    //     this.val.push($e.item);
-    //     this.typeAheadField.nativeElement.value = '';
-    // }
-    // search = (text$: Observable<string>) => {
-    //     return text$.pipe(
-    //         debounceTime(200),
-    //         distinctUntilChanged(),
-    //         tap(val => console.log(`value = ${val}`)),
-    //         // switchMap allows returning an observable rather than maps array
-    //         switchMap((searchText) => this.trendminer.searchResponse(searchText)),
-    //         catchError(val => of(val))
-    //     );
-    // };
 }
