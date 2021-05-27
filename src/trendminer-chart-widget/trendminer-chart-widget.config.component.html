@@ -62,11 +62,11 @@
                     <input class="form-control" type="date" id="startDate" name="startDate"
                            value="widgetHelper.getWidgetConfig().startDate"
                            [(ngModel)]="widgetHelper.getWidgetConfig().startDate"
-                           (change)="onConfigChanged()">
+                           (change)="onConfigChanged(true)">
                     <input class="form-control" type="time" id="startTime" name="startTime"
                            value="widgetHelper.getWidgetConfig().startTime"
                            [(ngModel)]="widgetHelper.getWidgetConfig().startTime"
-                           (change)="onConfigChanged()">
+                           (change)="onConfigChanged(true)">
                 </div>
 
             </div>
@@ -82,11 +82,11 @@
                     </div>
                     <input class="form-control" type="date" id="endDate" name="endDate"
                            value="widgetHelper.getWidgetConfig().endDate"
-                           [(ngModel)]="widgetHelper.getWidgetConfig().endDate" (change)="onConfigChanged()">
+                           [(ngModel)]="widgetHelper.getWidgetConfig().endDate" (change)="onConfigChanged(true)">
                     <input class="form-control" type="time" id="endTime" name="endTime"
                            value="widgetHelper.getWidgetConfig().endTime"
                            [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
-                           (change)="onConfigChanged()">
+                           (change)="onConfigChanged(true)">
                 </div>
 
             </div>
@@ -104,6 +104,37 @@
                 Chart Options
             </label>
             <div class="row">
+                <div class="col-lg-6">
+                    <label class="label-with-help" for="chartSelector" translate> Chart labels
+                        <span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="What unit to divide and label the x-axis with.">
+                        </span>
+                        <ng-select
+                                   [items]="widgetHelper.getWidgetConfig().units"
+                                   [closeOnSelect]="true"
+                                   [multiple]="false"
+                                   [hideSelected]="true"
+                                   [(ngModel)]="widgetHelper.getWidgetConfig().chartUnit"
+                                   (change)="onConfigChanged()">
+                        </ng-select>
+
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Show Context Items -->
+                <div class="form-check-inline col-lg-2">
+                    <label class="label-with-help" class="form-check-label" for="contextFlag" translate>
+                        <input class="form-check-input" type="checkbox" name="fillArea"
+                               [(ngModel)]="widgetHelper.getWidgetConfig().showContext"
+                               (ngModelChange)="onConfigChanged()" /> Show context events<span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Show context events on the chart for the chosen range.">
+                        </span>
+                    </label>
+                </div>
+
                 <!-- Fill under line -->
                 <div class="form-check-inline col-lg-2">
                     <label class="label-with-help" class="form-check-label" for="fillArea" translate>

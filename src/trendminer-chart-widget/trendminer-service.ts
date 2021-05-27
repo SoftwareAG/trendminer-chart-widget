@@ -13,7 +13,7 @@ export class TrendMinerService {
 
     }
 
-    getContextItems(baseURL: string, startDate: DateTime, endDate: DateTime, components: any[]) {
+    getContextItems(baseURL: string, startDate: string, endDate: string, components: any[]) {
         let sUrl = `${baseURL}context/item/search?page=0&sort=startEventDate%2Cdesc&size=60&useTimeSeriesIdentifier=true`;
 
         let bodyVal = {
@@ -25,17 +25,10 @@ export class TrendMinerService {
                         "type": "COMPONENT_FILTER"
                     },
                     {
-                        "startDate": `${startDate.toISO()} `,
-                        "endDate": `${endDate.toISO()} `,
+                        "startDate": `${startDate} `,
+                        "endDate": `${endDate} `,
                         "intervalType": "EVENT",
                         "type": "INTERVAL_FILTER"
-                    },
-                    {
-                        "type": "TYPE_FILTER",
-                        "valid": true,
-                        "types": [
-                            "SOLAR040"
-                        ]
                     }
                 ],
                 "viewType": "grid",

@@ -21,7 +21,7 @@
 
 import { Component, Input, OnDestroy, ViewChild, OnInit } from "@angular/core";
 import { Realtime, InventoryService } from "@c8y/client";
-import { Chart, ChartDataSets, ChartOptions, ChartPoint, ChartType } from "chart.js";
+import { Chart, ChartDataSets, ChartOptions, ChartPoint, ChartType, TimeUnit } from "chart.js";
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { ThemeService, BaseChartDirective, Label, Color } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
@@ -40,7 +40,7 @@ Chart.pluginService.register(annotationPlugin);
 export class TrendminerChartWidget implements OnDestroy, OnInit {
     widgetHelper: WidgetHelper<WidgetConfig>;
 
-    sub: any;
+    sub: any[] = [];
     hasData: boolean = false;
     errorMessage: any;
 
@@ -66,25 +66,9 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         let startDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}`);
         let endDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}`);
 
-        let i = Interval.fromDateTimes(startDate, endDate);
+        this.widgetHelper.getWidgetConfig().chartConfig.scales.xAxes[0].time.unit = <TimeUnit>this.widgetHelper.getWidgetConfig().chartUnit;
 
-
-        let units = ["second", "minute", "hour", "day", "week", "month", "year"];
-
-        let filtered = units.reduce((acc: string, u: string) => {
-            let test = i.length(<DurationUnit>`${u}s`);
-            if (test >= 1 && test < i.length(<DurationUnit>acc)) {
-                acc = u;
-            }
-            return acc;
-        }, "seconds");
-
-        this.widgetHelper.getWidgetConfig().chartConfig.scales.xAxes[0].time.unit = <Chart.TimeUnit>filtered;
-        let period_len = i.length("days");
-
-        console.log("FILTERED", filtered);
-
-        this.sub = this.trendminer.getDataForId(this.widgetHelper.getWidgetConfig().proxy, startDate.toISO(), endDate.toISO(), this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
+        this.sub.push(this.trendminer.getDataForId(this.widgetHelper.getWidgetConfig().proxy, startDate.toISO(), endDate.toISO(), this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
             (data: any[]) => {
                 this.lineChartData = [];
                 data.forEach(element => {
@@ -116,11 +100,40 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                 this.hasData = this.lineChartData.length > 0;
             },
             error => this.errorMessage = error
-        );
+        ));
+
+
+        if (this.widgetHelper.getWidgetConfig().showContext) {
+            // let components = this.widgetHelper.getWidgetConfig().seriesNames.map(s => s.id);
+            this.sub.push(this.trendminer.getContextItems(this.widgetHelper.getWidgetConfig().proxy, `${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}:00Z`, `${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}:00Z`, this.widgetHelper.getWidgetConfig().seriesNames).subscribe(
+                (data: any) => {
+                    let annotations = data.content.map(c => {
+                        return { name: c.shortKey, type: { ...c.type }, startDate: c.startEventDate, endDate: c.endEventDate };
+                    });
+                    console.log(annotations);
+
+                    //now add these
+                    // {
+                    //     type: 'line',
+                    //         mode: 'vertical',
+                    //             scaleID: 'x-axis-0',
+                    //                 value: '2021-05-23',
+                    //                     borderColor: 'orange',
+                    //                         borderWidth: 2,
+                    //                             label: {
+                    //         enabled: true,
+                    //             fontColor: 'orange',
+                    //                 content: 'Low Power';
+                    //     }
+                    // },
+                },
+                error => this.errorMessage = error
+            ));
+        }
     }
 
     ngOnDestroy(): void {
-        this.sub.unsubscribe();
+        this.sub.forEach(s => s.unsubscribe());
     }
 
 

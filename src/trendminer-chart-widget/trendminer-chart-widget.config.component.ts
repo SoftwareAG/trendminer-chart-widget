@@ -22,6 +22,7 @@ import { TrendMinerService } from "./trendminer-service";
 import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { DateTime, DurationUnit, Interval } from "luxon";
 @Component({
     selector: "trendminer-chart-widget-config-component",
     templateUrl: "./trendminer-chart-widget.config.component.html",
@@ -62,7 +63,7 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
     @Input() config: any = {};
     @ViewChild('typeAhead', { static: true }) typeAheadField;
 
-    onConfigChanged(): void {
+    onConfigChanged(updatePeriod: boolean = false): void {
         console.log("CONFIG-CHANGED");
 
         //deselect any that were deselected
@@ -81,6 +82,21 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
                 );
         });
 
+        let startDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}`);
+        let endDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}`);
+
+        if (updatePeriod) {
+            let i = Interval.fromDateTimes(startDate, endDate);
+
+            this.widgetHelper.getWidgetConfig().chartUnit =
+                <Chart.TimeUnit>this.widgetHelper.getWidgetConfig().units.reduce((acc: string, u: string) => {
+                    let test = i.length(<DurationUnit>`${u}s`);
+                    if (test >= 1 && test < i.length(<DurationUnit>acc)) {
+                        acc = u;
+                    }
+                    return acc;
+                }, "seconds");
+        }
         this.widgetHelper.setWidgetConfig(this.config);
     }
 

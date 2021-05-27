@@ -25,42 +25,30 @@ interface SeriesDetail {
  */
 export class WidgetConfig {
 
+    public units = ["second", "minute", "hour", "day", "week", "month", "year"];
     /**
      * The Chart basic options 
      */
 
-    public chartConfig : (ChartOptions & { annotation: any; }) = {
-    responsive: true,
-    scales: {
-        // We use this empty structure as a placeholder for dynamic theming.
-        xAxes: [{
-            type: 'time',
-            time: {
-                unit: 'hour'
-            },
-            display: true,
-            scaleLabel: { labelString: "Date" },
-        }],
-        yAxes: []
-    },
-    annotation: {
-        annotations: [
-            {
-                type: 'line',
-                mode: 'vertical',
-                scaleID: 'x-axis-0',
-                value: '2021-05-23',
-                borderColor: 'orange',
-                borderWidth: 2,
-                label: {
-                    enabled: true,
-                    fontColor: 'orange',
-                    content: 'Low Power'
-                }
-            },
-        ],
-    },
-};
+    public chartConfig: (ChartOptions & { annotation: any; }) = {
+        responsive: true,
+        scales: {
+            // We use this empty structure as a placeholder for dynamic theming.
+            xAxes: [{
+                type: 'time',
+                time: {
+                    unit: 'hour'
+                },
+                display: true,
+                scaleLabel: { labelString: "Date" },
+            }],
+            yAxes: []
+        },
+        annotation: {
+            annotations: [
+            ],
+        },
+    };
 
     /**
          * Default colours so we have a set of main
@@ -91,6 +79,8 @@ export class WidgetConfig {
     fitAxis: boolean;
     fillArea: boolean;
     proxy: string;
+    chartUnit: string;
+    showContext: boolean;
 
     /**
      * charts configuration
@@ -111,6 +101,8 @@ export class WidgetConfig {
         this.endTime = dEnd.toLocaleString(DateTime.TIME_24_SIMPLE);
         this.fillArea = false;
         this.fitAxis = false;
+        this.chartUnit = 'minute';
+        this.showContext = false;
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
     }
 
