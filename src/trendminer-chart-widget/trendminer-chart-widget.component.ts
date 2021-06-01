@@ -53,6 +53,8 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
     endTime$: BehaviorSubject<string>;
     proxy$: BehaviorSubject<string>;
 
+    timerVar: any;
+
     @Input() config;
     /**
      * Gain access to chart object so we can call update
@@ -91,12 +93,34 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
         this.lineChartOptions = this.widgetHelper.getWidgetConfig().chartConfig;
 
+        if (this.widgetHelper.getWidgetConfig().realtime) {
+            console.log("Setting Refresh");
+            this.timerVar = setInterval(this.forceRefresh, this.widgetHelper.getWidgetConfig().refreshPeriodMinutes * 60 * 1000, this);
+        }
+
     }
 
-    forceRefresh() {
-        this.widgetHelper.getWidgetConfig().endDate = DateTime.now().toISODate();
-        this.widgetHelper.getWidgetConfig().endTime = DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE);
-        this.emitValues();
+    getRefresh() {
+        return this.widgetHelper.getWidgetConfig().realtime;
+    }
+
+
+    toggleRefresh() {
+        this.widgetHelper.getWidgetConfig().realtime = !this.widgetHelper.getWidgetConfig().realtime;
+        if (this.widgetHelper.getWidgetConfig().realtime) {
+            console.log("Setting Refresh");
+            this.timerVar = setInterval(this.forceRefresh, this.widgetHelper.getWidgetConfig().refreshPeriodMinutes * 60 * 1000, this);
+        } else {
+            console.log("Clearing Refresh");
+            clearInterval(this.timerVar);
+        }
+    }
+
+    forceRefresh(comp: TrendminerChartWidget) {
+        console.log("Refresh Data");
+        comp.widgetHelper.getWidgetConfig().endDate = DateTime.now().toISODate();
+        comp.widgetHelper.getWidgetConfig().endTime = DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE);
+        comp.emitValues();
     }
 
     ngOnDestroy(): void {

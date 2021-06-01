@@ -30,13 +30,13 @@
                 </div>
             </div>
             <div class="col-lg-1">
-                <button style="color:#1776BF;" type="button" class="button" (click)="toggleRefresh()">
+                <button style="color:#1776BF;" type="button" class="button" (click)="toggleRefresh(this)">
                     <span
-                          [ngClass]="widgetHelper.getWidgetConfig().refresh ? 'fa fa-pause' : 'fa fa-play'"></span>
+                          [ngClass]="getRefresh() ? 'fa fa-pause' : 'fa fa-play'"></span>
                 </button>
             </div>
             <div class="col-lg-1">
-                <button style="color:#1776BF;" type="button" class="button" (click)="forceRefresh()"><span
+                <button style="color:#1776BF;" type="button" class="button" (click)="forceRefresh(this)"><span
                           class="fa fa-refresh"></span></button>
             </div>
         </div>
