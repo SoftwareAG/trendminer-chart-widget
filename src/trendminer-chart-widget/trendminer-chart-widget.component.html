@@ -1,20 +1,58 @@
 <div class="trendminer-chart-widget-container">
     <ng-container *ngIf="hasData else noshow">
-        <div style="float: right; margin-right: 10px;">
-            <!-- <button type="button" class="btn btn-link c8y-realtime" title="Toggle realtime" (click)="toggle()">
-                                            <span [ngClass]="realtimeState?'c8y-pulse active' : 'c8y-pulse inactive'"></span>
-                                            <span>Realtime</span>
-                                        </button> -->
-            <!--mat-icon-button-->
-            <button style="color:#1776BF;" type="button" class="button" (click)="refresh(this)"><span
-                      class="fa fa-refresh"></span></button>
+        <!-- calendar controls-->
+
+        <div class="row">
+
+            <!-- -->
+            <div class="col-lg-5">
+                <div class="input-group mb-1">
+                    <input class="form-control" type="date" id="startDate" name="startDate"
+                           value="widgetHelper.getWidgetConfig().startDate"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().startDate"
+                           (change)="emitValues()">
+                    <input class="form-control" type="time" id="startTime" name="startTime"
+                           value="widgetHelper.getWidgetConfig().startTime"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().startTime"
+                           (change)="emitValues()">
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="input-group mb-1">
+                    <input class="form-control" type="date" id="endDate" name="endDate"
+                           value="widgetHelper.getWidgetConfig().endDate"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().endDate"
+                           (change)="emitValues()">
+                    <input class="form-control" type="time" id="endTime" name="endTime"
+                           value="widgetHelper.getWidgetConfig().endTime"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
+                           (change)="emitValues()">
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <button style="color:#1776BF;" type="button" class="button" (click)="toggleRefresh()">
+                    <span
+                          [ngClass]="widgetHelper.getWidgetConfig().refresh ? 'fa fa-pause' : 'fa fa-play'"></span>
+                </button>
+            </div>
+            <div class="col-lg-1">
+                <button style="color:#1776BF;" type="button" class="button" (click)="forceRefresh()"><span
+                          class="fa fa-refresh"></span></button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mb-1">
+                <canvas #graph baseChart
+                        [datasets]="lineChartData"
+                        [options]="lineChartOptions"
+                        [legend]="lineChartLegend"
+                        [chartType]="lineChartType"></canvas>
+
+            </div>
+
         </div>
 
-        <canvas #graph baseChart
-                [datasets]="lineChartData"
-                [options]="lineChartOptions"
-                [legend]="lineChartLegend"
-                [chartType]="lineChartType"></canvas>
+
     </ng-container>
     <ng-template #noshow>
         <div class="spinner-snake text-primary" role="status">

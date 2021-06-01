@@ -81,6 +81,7 @@ export class WidgetConfig {
     proxy: string;
     chartUnit: string;
     showContext: boolean;
+    realtime: boolean;
 
     /**
      * charts configuration
@@ -103,6 +104,7 @@ export class WidgetConfig {
         this.fitAxis = false;
         this.chartUnit = 'minute';
         this.showContext = false;
+        this.realtime = false;
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
     }
 

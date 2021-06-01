@@ -28,6 +28,8 @@ import { TrendMinerService } from "./trendminer-service";
 import { DateTime, Interval, DurationUnit, DurationObjectUnits } from 'luxon';
 import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
+import { BehaviorSubject, combineLatest, Observable, of } from "rxjs";
+import { map } from "rxjs/operators";
 
 Chart.pluginService.register(annotationPlugin);
 
@@ -40,9 +42,16 @@ Chart.pluginService.register(annotationPlugin);
 export class TrendminerChartWidget implements OnDestroy, OnInit {
     widgetHelper: WidgetHelper<WidgetConfig>;
 
+    driverObs: any;
     sub: any[] = [];
     hasData: boolean = false;
     errorMessage: any;
+    testVal: BehaviorSubject<string>;
+    startDate$: BehaviorSubject<string>;
+    endDate$: BehaviorSubject<string>;
+    startTime$: BehaviorSubject<string>;
+    endTime$: BehaviorSubject<string>;
+    proxy$: BehaviorSubject<string>;
 
     @Input() config;
     /**
@@ -52,23 +61,57 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
     @ViewChild(BaseChartDirective, { static: false })
     chartElement: BaseChartDirective;
 
-    constructor(private realtime: Realtime, private invSvc: InventoryService, private trendminer: TrendMinerService) { }
+    constructor(private realtime: Realtime, private invSvc: InventoryService, private trendminer: TrendMinerService) {
+        this.testVal = new BehaviorSubject("");
+    }
 
-
+    emitValues() {
+        this.startDate$.next(this.widgetHelper.getWidgetConfig().startDate);
+        this.endDate$.next(this.widgetHelper.getWidgetConfig().endDate);
+        this.startTime$.next(this.widgetHelper.getWidgetConfig().startTime);
+        this.endTime$.next(this.widgetHelper.getWidgetConfig().endTime);
+    }
 
     async ngOnInit(): Promise<void> {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
+        console.log(this.widgetHelper.getWidgetConfig());
+
+        this.startDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().startDate);
+        this.endDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().endDate);
+        this.startTime$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().startTime);
+        this.endTime$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().endTime);
+        this.proxy$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().proxy);
+
+        this.driverObs = combineLatest([this.proxy$, this.startDate$, this.endDate$, this.startTime$, this.endTime$]).subscribe(
+            ([p, s, e, st, et]) => {
+                console.log("CHANGE");
+                this.getData(p, s, e, st, et);
+            }
+        );
 
         this.lineChartOptions = this.widgetHelper.getWidgetConfig().chartConfig;
 
-        console.log(this.widgetHelper.getWidgetConfig());
+    }
 
-        let startDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}`);
-        let endDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}`);
+    forceRefresh() {
+        this.widgetHelper.getWidgetConfig().endDate = DateTime.now().toISODate();
+        this.widgetHelper.getWidgetConfig().endTime = DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE);
+        this.emitValues();
+    }
 
+    ngOnDestroy(): void {
+        this.sub.forEach(s => s.unsubscribe());
+        this.driverObs.unsubscribe();
+    }
+
+    getData(prox: string, startDate: string, endDate: string, startTime: string, endTime: string) {
+        let startDateTime = DateTime.fromISO(`${startDate}T${startTime}`);
+        let endDateTime = DateTime.fromISO(`${endDate}T${endTime}`);
+
+        //clear previous before next - async calls effectively
+        this.sub.forEach(s => s.unsubscribe());
         this.widgetHelper.getWidgetConfig().chartConfig.scales.xAxes[0].time.unit = <TimeUnit>this.widgetHelper.getWidgetConfig().chartUnit;
-
-        this.sub.push(this.trendminer.getDataForId(this.widgetHelper.getWidgetConfig().proxy, startDate.toISO(), endDate.toISO(), this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
+        this.sub.push(this.trendminer.getDataForId(prox, startDateTime.toISO(), endDateTime.toISO(), this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
             (data: any[]) => {
                 this.lineChartData = [];
                 data.forEach(element => {
@@ -105,41 +148,47 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
         if (this.widgetHelper.getWidgetConfig().showContext) {
             // let components = this.widgetHelper.getWidgetConfig().seriesNames.map(s => s.id);
-            this.sub.push(this.trendminer.getContextItems(this.widgetHelper.getWidgetConfig().proxy, `${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}:00Z`, `${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}:00Z`, this.widgetHelper.getWidgetConfig().seriesNames).subscribe(
+            this.sub.push(this.trendminer.getContextItems(prox, `${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}:00Z`, `${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}:00Z`, this.widgetHelper.getWidgetConfig().seriesNames).subscribe(
                 (data: any) => {
                     let annotations = data.content.map(c => {
                         return { name: c.shortKey, type: { ...c.type }, startDate: c.startEventDate, endDate: c.endEventDate };
-                    });
-                    console.log(annotations);
+                    }).sort((a, b) => DateTime.fromISO(a.startDate) < DateTime.fromISO(b.startDate));
 
-                    //now add these
-                    // {
-                    //     type: 'line',
-                    //         mode: 'vertical',
-                    //             scaleID: 'x-axis-0',
-                    //                 value: '2021-05-23',
-                    //                     borderColor: 'orange',
-                    //                         borderWidth: 2,
-                    //                             label: {
-                    //         enabled: true,
-                    //             fontColor: 'orange',
-                    //                 content: 'Low Power';
-                    //     }
-                    // },
+                    this.lineChartOptions.annotation.annotations = [];
+                    for (let index = 0; index < annotations.length; index++) {
+                        const ann = annotations[index];
+                        console.log(ann);
+                        this.lineChartOptions.annotation.annotations.push(
+                            //now add these
+                            {
+                                type: 'line',
+                                mode: 'vertical',
+                                scaleID: 'x-axis-0',
+                                value: ann.startDate,
+                                borderColor: 'orange',
+                                borderWidth: 2,
+                                label: {
+                                    enabled: true,
+                                    fontColor: 'orange',
+                                    content: ann.name,
+                                }
+                            }
+                        );
+
+
+                    }
+                    console.log(this.widgetHelper.getWidgetConfig().chartConfig.annotation.annotations);
                 },
                 error => this.errorMessage = error
             ));
         }
     }
 
-    ngOnDestroy(): void {
-        this.sub.forEach(s => s.unsubscribe());
-    }
 
 
     public lineChartData: ChartDataSets[] = [];
     public lineChartLabels: Label[] = [];
-    public lineChartOptions: ChartOptions;
+    public lineChartOptions: ChartOptions & { annotation: any; };
     public lineChartLegend = true;
     public lineChartType: ChartType = 'line';
 
