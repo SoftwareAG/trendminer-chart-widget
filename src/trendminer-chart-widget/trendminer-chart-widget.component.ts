@@ -22,16 +22,83 @@
 import { Component, Input, OnDestroy, ViewChild, OnInit } from "@angular/core";
 import { Realtime, InventoryService } from "@c8y/client";
 import { Chart, ChartDataSets, ChartOptions, ChartPoint, ChartType, TimeUnit } from "chart.js";
-import annotationPlugin from 'chartjs-plugin-annotation';
-import { ThemeService, BaseChartDirective, Label, Color } from "ng2-charts";
+//import annotationPlugin from 'chartjs-plugin-annotation';
+import { ThemeService, BaseChartDirective, Label } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
-import { DateTime, Interval, DurationUnit, DurationObjectUnits } from 'luxon';
+import { DateTime } from 'luxon';
 import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
-import { BehaviorSubject, combineLatest, Observable, of } from "rxjs";
-import { map } from "rxjs/operators";
+import { BehaviorSubject, combineLatest } from "rxjs";
 
-Chart.pluginService.register(annotationPlugin);
+
+const chartStates = new Map();
+
+export function scaleValue(scale, value, fallback) {
+    value = typeof value === 'number' ? value : DateTime.fromISO(value).toMillis();
+    console.log(value);
+    return isFinite(value) ? scale.getPixelForValue(value) : fallback;
+}
+
+
+
+var FontAwesomeAnnotationPlugin = {
+
+    defaultOptions: {
+        scaleID: 'x',
+        annotations: []
+    },
+
+    drawFontAwesomeAnnotation: function (chartInstance, position) {
+        var FontAwesomeAnnotation = chartInstance.FontAwesomeAnnotation;
+        const xScale = chartInstance.scales['x-axis-0'];
+        const yScale = chartInstance.scales[chartInstance.data.datasets[0].yAxisID];
+
+        console.log("MIN", yScale.min, "MAX", yScale.max);
+
+        // only draw images meant for us
+        if (FontAwesomeAnnotation.position != position) return;
+
+        FontAwesomeAnnotation.annotations.forEach(element => {
+            var context = chartInstance.chart.ctx;
+            context.font = '100 48px "FontAwesome"';
+            context.fillStyle = "black";
+            let code = parseInt(`0x${element.code}`);
+            let x = scaleValue(xScale, element.value, 40);
+            // draw line
+            context.beginPath();
+            context.strokeStyle = '#ff0000';
+            context.moveTo(x, yScale.top);
+            context.lineTo(x, yScale.bottom);
+            context.stroke();
+
+            setTimeout(_ => context.fillText(String.fromCharCode(code), x, 40), 200);
+        });
+    },
+
+    beforeInit: function (chartInstance) {
+        chartInstance.FontAwesomeAnnotation = {};
+
+        var helpers = Chart.helpers,
+            options = chartInstance.options;
+
+        if (options.FontAwesomeAnnotation) {
+            var clonedDefaultOptions = helpers.clone(this.defaultOptions),
+                FontAwesomeAnnotation = helpers.extend(clonedDefaultOptions, options.FontAwesomeAnnotation);
+            chartInstance.FontAwesomeAnnotation = FontAwesomeAnnotation;
+        }
+    },
+
+    // draw the image behind most chart elements
+    beforeDraw: function (chartInstance) {
+        this.drawFontAwesomeAnnotation(chartInstance, "back");
+    },
+    // draw the image in front of most chart elements
+    afterDraw: function (chartInstance) {
+        this.drawFontAwesomeAnnotation(chartInstance, "front");
+    },
+};
+
+Chart.pluginService.register(FontAwesomeAnnotationPlugin);
 
 @Component({
     selector: "lib-trendminer-chart-widget",
@@ -178,30 +245,24 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                         return { name: c.shortKey, type: { ...c.type }, startDate: c.startEventDate, endDate: c.endEventDate };
                     }).sort((a, b) => DateTime.fromISO(a.startDate) < DateTime.fromISO(b.startDate));
 
-                    this.lineChartOptions.annotation.annotations = [];
+                    this.lineChartOptions.FontAwesomeAnnotation.annotations = [];
                     for (let index = 0; index < annotations.length; index++) {
                         const ann = annotations[index];
                         console.log(ann);
-                        this.lineChartOptions.annotation.annotations.push(
+                        this.lineChartOptions.FontAwesomeAnnotation.annotations.push(
                             //now add these
                             {
-                                type: 'line',
-                                mode: 'vertical',
-                                scaleID: 'x-axis-0',
+                                code: this.widgetHelper.getWidgetConfig().eventSymbol.code,
                                 value: ann.startDate,
-                                borderColor: 'orange',
-                                borderWidth: 2,
-                                label: {
-                                    enabled: true,
-                                    fontColor: 'orange',
-                                    content: ann.name,
-                                }
+                                position: "front"
                             }
                         );
 
 
                     }
-                    console.log(this.widgetHelper.getWidgetConfig().chartConfig.annotation.annotations);
+                    //console.log(this.widgetHelper.getWidgetConfig().chartConfig.FontAwesomeAnnotation.annotations);
+                    console.log(this.lineChartOptions.FontAwesomeAnnotation.annotations);
+
                 },
                 error => this.errorMessage = error
             ));
@@ -212,7 +273,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
     public lineChartData: ChartDataSets[] = [];
     public lineChartLabels: Label[] = [];
-    public lineChartOptions: ChartOptions & { annotation: any; };
+    public lineChartOptions: ChartOptions & { FontAwesomeAnnotation: any; };
     public lineChartLegend = true;
     public lineChartType: ChartType = 'line';
 

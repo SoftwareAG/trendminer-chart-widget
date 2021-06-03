@@ -134,8 +134,29 @@
                         </span>
                     </label>
                 </div>
+                <!-- Choose icon -->
+                <div class="col-lg-6">
+                    <label class="label-with-help" for="TrendminerChartWidget-fa-chooser">
+                        select one or more series to chart
+                        <span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Select one or more time series for the chart.">
+                        </span>
+                        <ng-select
+                                   [items]="icons"
+                                   bindLabel="name"
+                                   [closeOnSelect]="true"
+                                   [multiple]="false"
+                                   [hideSelected]="true"
+                                   [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbol"
+                                   (change)="onConfigChanged()">
+                        </ng-select>
+                    </label>
+                </div>
 
-                <!-- Fill under line -->
+            </div>
+            <!-- Fill under line -->
+            <div class="row">
                 <div class="form-check-inline col-lg-2">
                     <label class="label-with-help" class="form-check-label" for="fillArea" translate>
                         <input class="form-check-input" type="checkbox" name="fillArea"
@@ -153,7 +174,7 @@
                     <div class="input-group mb-1">
                         <div class="input-group-prepend">
                             <input class="form-check-input" type="checkbox" name="beginAtZero2"
-                                   [(ngModel)]="widgetHelper.getWidgetConfig().refresh"
+                                   [(ngModel)]="widgetHelper.getWidgetConfig().realtime"
                                    (ngModelChange)="onConfigChanged()" />
                             <span class="input-group-text" id="basic-addon2">
                                 refresh every

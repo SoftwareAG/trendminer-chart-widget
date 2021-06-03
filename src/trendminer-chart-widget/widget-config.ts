@@ -30,7 +30,7 @@ export class WidgetConfig {
      * The Chart basic options 
      */
 
-    public chartConfig: (ChartOptions & { annotation: any; }) = {
+    public chartConfig: (ChartOptions & { FontAwesomeAnnotation: any; }) = {
         responsive: true,
         scales: {
             // We use this empty structure as a placeholder for dynamic theming.
@@ -44,7 +44,7 @@ export class WidgetConfig {
             }],
             yAxes: []
         },
-        annotation: {
+        FontAwesomeAnnotation: {
             annotations: [
             ],
         },
@@ -83,6 +83,7 @@ export class WidgetConfig {
     showContext: boolean;
     realtime: boolean;
     refreshPeriodMinutes: number;
+    eventSymbol: any;
 
     /**
      * charts configuration
@@ -107,6 +108,7 @@ export class WidgetConfig {
         this.showContext = false;
         this.realtime = false;
         this.refreshPeriodMinutes = 5;
+        this.eventSymbol = "bolt";
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
     }
 
