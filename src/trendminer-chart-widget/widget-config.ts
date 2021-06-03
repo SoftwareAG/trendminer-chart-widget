@@ -20,6 +20,20 @@ interface SeriesDetail {
     ownAxis: boolean;
 }
 
+export interface AnnotationDetail {
+    startCode: string;
+    endCode: string;
+    iconSize: number;
+    startValue: any;
+    endValue: any;
+    startColor: string;
+    endColor: string;
+    position: string;
+    startLineColor: string;
+    endLineColor: string;
+}
+
+
 /**
  * This class will contain all the bespoke config for the widget
  */
@@ -30,7 +44,7 @@ export class WidgetConfig {
      * The Chart basic options 
      */
 
-    public chartConfig: (ChartOptions & { FontAwesomeAnnotation: any; }) = {
+    public chartConfig: (ChartOptions & { fontAwesomeAnnotation: AnnotationDetail[]; }) = {
         responsive: true,
         scales: {
             // We use this empty structure as a placeholder for dynamic theming.
@@ -44,10 +58,7 @@ export class WidgetConfig {
             }],
             yAxes: []
         },
-        FontAwesomeAnnotation: {
-            annotations: [
-            ],
-        },
+        fontAwesomeAnnotation: [],
     };
 
     /**
@@ -83,7 +94,16 @@ export class WidgetConfig {
     showContext: boolean;
     realtime: boolean;
     refreshPeriodMinutes: number;
-    eventSymbol: any;
+
+    eventSymbolStart: any;
+    eventSymbolEnd: any;
+    eventSymbolSize: number;
+    eventSymbolStartColor: string;
+    eventSymbolEndColor: string;
+    eventLineStartColor: string;
+    eventLineEndColor: string;
+
+
 
     /**
      * charts configuration
@@ -108,7 +128,14 @@ export class WidgetConfig {
         this.showContext = false;
         this.realtime = false;
         this.refreshPeriodMinutes = 5;
-        this.eventSymbol = "bolt";
+        this.eventSymbolStart = "";
+        this.eventSymbolEnd = "";
+        this.eventSymbolSize = 18;
+        this.eventSymbolStartColor = "";
+        this.eventSymbolEndColor = "";
+        this.eventLineStartColor = "";
+        this.eventLineEndColor = "";
+
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
     }
 

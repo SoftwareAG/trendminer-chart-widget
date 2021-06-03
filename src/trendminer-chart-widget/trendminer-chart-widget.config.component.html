@@ -122,6 +122,12 @@
                     </label>
                 </div>
             </div>
+
+            <!--
+                    Here we have the context control section
+
+
+            -->
             <div class="row">
                 <!-- Show Context Items -->
                 <div class="form-check-inline col-lg-2">
@@ -134,8 +140,28 @@
                         </span>
                     </label>
                 </div>
+                <div class=" col-lg-3">
+                    <input class="form-control" type="text"
+                           name="eventSymbolSize" [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolSize"
+                           (change)="onConfigChanged()">
+
+                    <label>
+                        start symbol
+                    </label>
+                    <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolStartColor"
+                           [value]="widgetHelper.getWidgetConfig().eventSymbolStartColor"
+                           (ngModelChange)="onConfigChanged()" />
+                    <label>
+                        line
+                    </label>
+                    <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().eventLineStartColor"
+                           [value]="widgetHelper.getWidgetConfig().eventLineStartColor"
+                           (ngModelChange)="onConfigChanged()" />
+                </div>
                 <!-- Choose icon -->
-                <div class="col-lg-6">
+                <div class="col-lg-3">
                     <label class="label-with-help" for="TrendminerChartWidget-fa-chooser">
                         select one or more series to chart
                         <span class="help-icon">
@@ -148,7 +174,43 @@
                                    [closeOnSelect]="true"
                                    [multiple]="false"
                                    [hideSelected]="true"
-                                   [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbol"
+                                   [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolStart"
+                                   (change)="onConfigChanged()">
+                        </ng-select>
+                    </label>
+                </div>
+
+                <div class=" col-lg-2">
+                    <label>
+                        end symbol
+                    </label>
+                    <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolEndColor"
+                           [value]="widgetHelper.getWidgetConfig().eventSymbolEndColor"
+                           (ngModelChange)="onConfigChanged()" />
+                    <label>
+                        line
+                    </label>
+                    <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().eventLineEndColor"
+                           [value]="widgetHelper.getWidgetConfig().eventLineEndColor"
+                           (ngModelChange)="onConfigChanged()" />
+                </div>
+                <!-- Choose icon -->
+                <div class="col-lg-3">
+                    <label class="label-with-help" for="TrendminerChartWidget-fa-chooser1">
+                        select one or more series to chart
+                        <span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Select one or more time series for the chart.">
+                        </span>
+                        <ng-select
+                                   [items]="icons"
+                                   bindLabel="name"
+                                   [closeOnSelect]="true"
+                                   [multiple]="false"
+                                   [hideSelected]="true"
+                                   [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolEnd"
                                    (change)="onConfigChanged()">
                         </ng-select>
                     </label>
