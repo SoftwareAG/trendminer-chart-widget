@@ -15,7 +15,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
  */
-import { Component, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Observable, Subject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TrendMinerService } from "./trendminer-service";
@@ -23,7 +23,7 @@ import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
 import { DateTime, DurationUnit, Interval } from "luxon";
 
-const falist = require("./font-awesome-list.json");
+const falist = require("./font-awesome4-list.json");
 
 @Component({
     selector: "trendminer-chart-widget-config-component",
@@ -58,6 +58,12 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
 
     }
 
+    getIconString(code) {
+        let startCode = parseInt(`0x${code}`);
+        return String.fromCharCode(startCode);
+    }
+
+
     ngOnInit(): void {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
     }
@@ -66,6 +72,7 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
 
     @Input() config: any = {};
     @ViewChild('typeAhead', { static: true }) typeAheadField;
+    @ViewChild('startIcon', { static: false }) startIcon: ElementRef;
 
     onConfigChanged(updatePeriod: boolean = false): void {
         console.log("CONFIG-CHANGED");
@@ -101,8 +108,15 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
                     return acc;
                 }, "seconds");
         }
+
         console.log(this.config);
         this.widgetHelper.setWidgetConfig(this.config);
+
+
+    }
+    htmlCode(val) {
+        let startCode = parseInt(`&#x${val};`);
+        return startCode;
     }
 
 }

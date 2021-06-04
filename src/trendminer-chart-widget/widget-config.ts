@@ -128,15 +128,16 @@ export class WidgetConfig {
         this.showContext = false;
         this.realtime = false;
         this.refreshPeriodMinutes = 5;
-        this.eventSymbolStart = "";
-        this.eventSymbolEnd = "";
+        this.eventSymbolStart = {};
+        this.eventSymbolEnd = {};
         this.eventSymbolSize = 18;
-        this.eventSymbolStartColor = "";
-        this.eventSymbolEndColor = "";
-        this.eventLineStartColor = "";
-        this.eventLineEndColor = "";
+        this.eventSymbolStartColor = "#FF0000";
+        this.eventSymbolEndColor = "#00FF00";
+        this.eventLineStartColor = "#FF0000";
+        this.eventLineEndColor = "#00FF00";
 
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
+        console.log("THIS", this);
     }
 
     /**

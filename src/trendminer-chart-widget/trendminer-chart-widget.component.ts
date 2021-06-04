@@ -67,7 +67,7 @@ var FontAwesomeAnnotationPlugin = {
 
 
         let context = chartInstance.chart.ctx;
-        let previousX = undefined;
+        let previousX = [];
         options.fontAwesomeAnnotation.forEach(element => {
 
             if (element.position === position) {
@@ -91,11 +91,16 @@ var FontAwesomeAnnotationPlugin = {
                     context.stroke();
                     //icon
                     let next = x1 - (element.iconSize / 2);
-                    let overlap = (previousX && (previousX + element.iconSize - next) <= 0) ? 2 : 1;
+                    let overlap = previousX.reduce((acc, v) => {
+                        if (v + element.iconSize - next <= 0)
+                            acc += 1;
+                        return acc;
+                    }, 0);
+                    //let overlap = (previousX && (previousX + element.iconSize - next) <= 0) ? 2 : 1;
                     context.fillStyle = element.startColor;
-                    context.fillText(String.fromCharCode(startCode), next, yScale.top + (element.iconSize * overlap));
+                    context.fillText(String.fromCharCode(startCode), next, 1 + yScale.top + (element.iconSize * overlap));
                     //allow us to stagger rather than overlap icons
-                    previousX = next;
+                    previousX.push(next);
                 }
                 if (x2 !== undefined) {
                     // draw line
@@ -105,11 +110,16 @@ var FontAwesomeAnnotationPlugin = {
                     context.lineTo(x2, y1);
                     context.stroke();
                     let next = x2 - (element.iconSize / 2);
-                    let overlap = (previousX && (previousX + element.iconSize - next) <= 0) ? 2 : 1;
+                    let overlap = previousX.reduce((acc, v) => {
+                        if (v + element.iconSize - next <= 0)
+                            acc += 1;
+                        return acc;
+
+                    }, 0);
                     context.fillStyle = element.endColor;
-                    context.fillText(String.fromCharCode(endCode), next, yScale.top + (element.iconSize * overlap));
+                    context.fillText(String.fromCharCode(endCode), next, 1 + yScale.top + (element.iconSize * overlap));
                     //allow us to stagger rather than overlap icons
-                    previousX = next;
+                    previousX.push(next);
                 }
 
             }
