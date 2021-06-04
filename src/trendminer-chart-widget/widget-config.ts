@@ -23,7 +23,7 @@ interface SeriesDetail {
 export interface AnnotationDetail {
     startCode: string;
     endCode: string;
-    iconSize: number;
+    iconSize: string;
     startValue: any;
     endValue: any;
     startColor: string;
@@ -31,6 +31,7 @@ export interface AnnotationDetail {
     position: string;
     startLineColor: string;
     endLineColor: string;
+    tooltip: string;
 }
 
 
@@ -97,7 +98,7 @@ export class WidgetConfig {
 
     eventSymbolStart: any;
     eventSymbolEnd: any;
-    eventSymbolSize: number;
+    eventSymbolSize: string;
     eventSymbolStartColor: string;
     eventSymbolEndColor: string;
     eventLineStartColor: string;
@@ -130,11 +131,12 @@ export class WidgetConfig {
         this.refreshPeriodMinutes = 5;
         this.eventSymbolStart = {};
         this.eventSymbolEnd = {};
-        this.eventSymbolSize = 18;
+        this.eventSymbolSize = "18";
         this.eventSymbolStartColor = "#FF0000";
         this.eventSymbolEndColor = "#00FF00";
         this.eventLineStartColor = "#FF0000";
         this.eventLineEndColor = "#00FF00";
+
 
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
         console.log("THIS", this);

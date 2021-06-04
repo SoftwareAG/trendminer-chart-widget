@@ -27,11 +27,10 @@ import { ThemeService, BaseChartDirective, Label } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
 import { DateTime } from 'luxon';
 import { WidgetHelper } from "./widget-helper";
-import { AnnotationDetail, WidgetConfig } from "./widget-config";
+import { AnnotationDetail, WidgetConfig } from './widget-config';
 import { BehaviorSubject, combineLatest } from "rxjs";
 import * as _ from 'lodash';
 
-const chartStates = new Map();
 
 export function scaleValue(scale, value, fallback) {
     value = typeof value === 'number' ? value : DateTime.fromISO(value).toMillis();
@@ -41,6 +40,8 @@ export function scaleValue(scale, value, fallback) {
 
 
 var FontAwesomeAnnotationPlugin = {
+
+    areas: [],
 
     hatchRect: function (ctx, x1, y1, dx, dy, delta, color) {
         ctx.rect(x1, y1, dx, dy);
@@ -57,18 +58,34 @@ var FontAwesomeAnnotationPlugin = {
         });
         ctx.restore();
     },
+    avoidCollision: function (x1: number, iconY: number) {
+        console.log("Y=", iconY, this.areas);
+        let colliding: boolean = true;
+        //check collisions
+        while (colliding) {
+            colliding = false;
+            for (let index = 0; index < this.areas.length; index++) {
+                const element = this.areas[index];
+                if (x1 >= element.x1 && x1 <= element.x2 && iconY >= element.y1 && iconY <= element.y2) {
+                    iconY = element.y2 + 1;
+                    colliding = true;
+                    break;
+                }
+            }
+        }
+        return iconY;
+    },
     drawFontAwesomeAnnotation: function (chartInstance, position) {
         let options: ChartOptions & { fontAwesomeAnnotation: AnnotationDetail[]; } = chartInstance.options;
         const xScale = chartInstance.scales['x-axis-0'];
         const yScale = chartInstance.scales[chartInstance.data.datasets[0].yAxisID];
         // only draw images meant for us
         //if (options.fontAwesomeAnnotation.position != position) return;
-
+        this.areas.length = 0;
 
 
         let context = chartInstance.chart.ctx;
-        let previousX = [];
-        options.fontAwesomeAnnotation.forEach(element => {
+        options.fontAwesomeAnnotation.forEach((element: AnnotationDetail) => {
 
             if (element.position === position) {
                 //properties - weight, size and colour
@@ -89,18 +106,17 @@ var FontAwesomeAnnotationPlugin = {
                     context.moveTo(x1, yScale.top);
                     context.lineTo(x1, y1);
                     context.stroke();
+
+                    let thesum: number = yScale.top + parseInt(element.iconSize);
+                    let iconY: number = this.avoidCollision(x1, thesum);
                     //icon
-                    let next = x1 - (element.iconSize / 2);
-                    let overlap = previousX.reduce((acc, v) => {
-                        if (v + element.iconSize - next <= 0)
-                            acc += 1;
-                        return acc;
-                    }, 0);
-                    //let overlap = (previousX && (previousX + element.iconSize - next) <= 0) ? 2 : 1;
                     context.fillStyle = element.startColor;
-                    context.fillText(String.fromCharCode(startCode), next, 1 + yScale.top + (element.iconSize * overlap));
-                    //allow us to stagger rather than overlap icons
-                    previousX.push(next);
+                    context.fillText(String.fromCharCode(startCode), x1, iconY);
+                    context.fillStyle = '#000000';
+                    context.fillText(` ${element.tooltip}`, x1 + parseInt(element.iconSize), iconY, parseInt(element.iconSize) * 7);
+
+                    //stop collisions
+                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + (parseInt(element.iconSize) * 8), y2: iconY + parseInt(element.iconSize) });
                 }
                 if (x2 !== undefined) {
                     // draw line
@@ -109,17 +125,12 @@ var FontAwesomeAnnotationPlugin = {
                     context.moveTo(x2, yScale.top);
                     context.lineTo(x2, y1);
                     context.stroke();
-                    let next = x2 - (element.iconSize / 2);
-                    let overlap = previousX.reduce((acc, v) => {
-                        if (v + element.iconSize - next <= 0)
-                            acc += 1;
-                        return acc;
-
-                    }, 0);
                     context.fillStyle = element.endColor;
-                    context.fillText(String.fromCharCode(endCode), next, 1 + yScale.top + (element.iconSize * overlap));
-                    //allow us to stagger rather than overlap icons
-                    previousX.push(next);
+                    let iconY = this.avoidCollision(x2, yScale.top + parseInt(element.iconSize));
+                    context.fillText(String.fromCharCode(endCode), x2, iconY);
+
+                    //stop collisions
+                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + (parseInt(element.iconSize) * 8), y2: iconY + parseInt(element.iconSize) });
                 }
 
             }
@@ -140,7 +151,7 @@ var FontAwesomeAnnotationPlugin = {
     // draw the image in front of most chart elements
     afterDraw: function (chartInstance) {
         this.drawFontAwesomeAnnotation(chartInstance, "front");
-    },
+    }
 };
 
 Chart.pluginService.register(FontAwesomeAnnotationPlugin);
@@ -306,7 +317,8 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                                 endValue: ann.endDate,
                                 position: "front", //should default this tbh
                                 startLineColor: this.widgetHelper.getWidgetConfig().eventLineStartColor,
-                                endLineColor: this.widgetHelper.getWidgetConfig().eventLineEndColor
+                                endLineColor: this.widgetHelper.getWidgetConfig().eventLineEndColor,
+                                tooltip: `${ann.name} (${ann.type.name})`
                             }
                         );
 
