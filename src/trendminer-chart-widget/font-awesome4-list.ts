@@ -1,4 +1,4 @@
-{
+export const falist = {
     "icons": [
         {
             "key": "fa-glass",

@@ -22,8 +22,7 @@ import { TrendMinerService } from "./trendminer-service";
 import { WidgetHelper } from "./widget-helper";
 import { WidgetConfig } from "./widget-config";
 import { DateTime, DurationUnit, Interval } from "luxon";
-
-const falist = require("./font-awesome4-list.json");
+import { falist } from './font-awesome4-list';
 
 @Component({
     selector: "trendminer-chart-widget-config-component",

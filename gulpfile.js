@@ -39,6 +39,13 @@ const compile = series(
             }))
             .pipe(dest('./dist/widget-library/'));
     },
+    function replaceStylePath() {
+        return src('./dist/widget-library/**/*')
+            .pipe(replace(/~assets/g, function () {
+                return path.relative(this.file.dirname, './dist/widget-library/assets').replace(/\\/g, '/');
+            }))
+            .pipe(dest('./dist/widget-library/'));
+    },
     async function packLibrary() { return execSync("npm pack ./widget-library", { cwd: './dist', stdio: 'inherit' }); }
 );
 

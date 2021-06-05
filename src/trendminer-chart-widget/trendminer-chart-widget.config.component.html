@@ -192,13 +192,13 @@
                                    [hideSelected]="true"
                                    [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolStart"
                                    (change)="onConfigChanged()">
-                            <ng-template class="fa" ng-label-tmp let-item="item" let-index="index"
+                            <ng-template class="fa mb-1" ng-label-tmp let-item="item" let-index="index"
                                          style="font-weight: 900;">
-                                {{item.name}} <span [ngClass]="'fa '+ item.key" aria-hidden="true"></span>
+                                <span [ngClass]="'fa '+ item.key" aria-hidden="true"></span> {{item.name}}
                             </ng-template>
-                            <ng-template class="fa" ng-option-tmp let-item="item" let-index="index"
+                            <ng-template class="fa mb-1" ng-option-tmp let-item="item" let-index="index"
                                          style="font-weight: 900;">
-                                {{item.name}} <span [ngClass]="'fa ' + item.key" aria-hidden="true"></span>
+                                <span [ngClass]="'fa ' + item.key" aria-hidden="true"></span> {{item.name}}
                             </ng-template>
                         </ng-select>
                         <!-- <select name="sample" id="sample" class="fa">
@@ -247,13 +247,13 @@
                                    [hideSelected]="true"
                                    [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolEnd"
                                    (change)="onConfigChanged()">
-                            <ng-template class="fa" ng-label-tmp let-item="item" let-index="index"
+                            <ng-template class="fa mb-1" ng-label-tmp let-item="item" let-index="index"
                                          style="font-weight: 900;">
-                                {{item.name}} <span [ngClass]="'fa '+ item.key" aria-hidden="true"></span>
+                                <span [ngClass]="'fa '+ item.key" aria-hidden="true"></span> {{item.name}}
                             </ng-template>
-                            <ng-template class="fa" ng-option-tmp let-item="item" let-index="index"
+                            <ng-template class="fa mb-1" ng-option-tmp let-item="item" let-index="index"
                                          style="font-weight: 900;">
-                                {{item.name}} <span [ngClass]="'fa ' + item.key" aria-hidden="true"></span>
+                                <span [ngClass]="'fa ' + item.key" aria-hidden="true"></span> {{item.name}}
                             </ng-template>
                         </ng-select>
                     </label>
@@ -262,7 +262,7 @@
             </div>
             <div class="row">
                 <!-- refresh -->
-                <div class="form-group col-lg-12">
+                <div class="form-group col-lg-4">
                     <div class="input-group mb-1">
                         <div class="input-group-prepend">
                             <input class="form-check-input" type="checkbox" name="beginAtZero2"
