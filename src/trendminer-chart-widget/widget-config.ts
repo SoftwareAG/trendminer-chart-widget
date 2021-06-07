@@ -32,6 +32,9 @@ export interface AnnotationDetail {
     startLineColor: string;
     endLineColor: string;
     tooltip: string;
+    fontColor: string;
+    fontSize: number;
+    showContextLabels: boolean;
 }
 
 
@@ -113,6 +116,9 @@ export class WidgetConfig {
      * charts configuration
      */
     changed: boolean = false;
+    fontColor: string;
+    fontSize: number;
+    showContextLabels: boolean;
 
     /**
      *  Create an instance of the config object
@@ -144,6 +150,11 @@ export class WidgetConfig {
         //default 5 days
         this.periodUnit = "day";
         this.periodValue = 5;
+
+        //context labels
+        this.fontColor = "#000000";
+        this.fontSize = 10;
+        this.showContextLabels = true;
 
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
         //console.log("THIS", this);

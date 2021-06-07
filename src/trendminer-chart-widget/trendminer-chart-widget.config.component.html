@@ -299,6 +299,37 @@
 
             </div>
             <div class="row">
+                <div class="form-check-inline col-lg-2">
+                    <label class="label-with-help" class="form-check-label" for="contextFlag" translate>
+                        <input class="form-check-input" type="checkbox" name="fillArea"
+                               [(ngModel)]="widgetHelper.getWidgetConfig().showContextLabels"
+                               (ngModelChange)="onConfigChanged()" /> Show context labels<span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Show context labels for events in the range.">
+                        </span>
+                    </label>
+                </div>
+
+                <div class=" col-lg-1">
+                    <label>
+                        Font
+                    </label>
+                    <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().fontColor"
+                           [value]="widgetHelper.getWidgetConfig().fontColor"
+                           (ngModelChange)="onConfigChanged()" />
+                </div>
+                <div class=" col-lg-1">
+                    <label>
+                        size
+                    </label>
+                    <input class="form-control" type="text" [ngModelOptions]="{ standalone: true }"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().fontSize"
+                           [value]="widgetHelper.getWidgetConfig().fontSize"
+                           (ngModelChange)="onConfigChanged()" />
+                </div>
+            </div>
+            <div class="row">
                 <!-- refresh -->
                 <div class="form-group col-lg-4">
                     <div class="input-group mb-1">

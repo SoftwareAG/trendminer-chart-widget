@@ -30,6 +30,7 @@ import { WidgetHelper } from "./widget-helper";
 import { AnnotationDetail, WidgetConfig } from './widget-config';
 import { BehaviorSubject, combineLatest } from "rxjs";
 import * as _ from 'lodash';
+import { icon } from "@fortawesome/fontawesome-svg-core";
 
 
 export function scaleValue(scale, value, fallback) {
@@ -109,28 +110,42 @@ var FontAwesomeAnnotationPlugin = {
 
                     let thesum: number = yScale.top + parseInt(element.iconSize);
                     let iconY: number = this.avoidCollision(x1, thesum);
+
+                    let iconTxt = String.fromCharCode(startCode);
+                    let iconSz = context.measureText(iconTxt).width;
+                    let textSz = 0; //if off no width
+
                     //icon
                     context.fillStyle = element.startColor;
-                    context.fillText(String.fromCharCode(startCode), x1, iconY);
-                    context.fillStyle = '#000000';
-                    context.fillText(` ${element.tooltip}`, x1 + parseInt(element.iconSize), iconY, parseInt(element.iconSize) * 7);
+                    context.fillText(iconTxt, x1, iconY);
+                    if (element.showContextLabels) {
+                        context.font = `600 ${element.fontSize}px "FontAwesome"`;
+                        context.fillStyle = element.fontColor;
+                        let txt = ` ${element.tooltip}`;
+                        textSz = context.measureText(txt).width; //store width
+                        context.fillText(txt, x1 + iconSz, iconY);
+                    }
 
                     //stop collisions
-                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + (parseInt(element.iconSize) * 8), y2: iconY + parseInt(element.iconSize) });
+                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + iconSz + textSz, y2: iconY + iconSz });
                 }
                 if (x2 !== undefined) {
-                    // draw line
+                    // reset font
+                    context.font = `600 ${element.iconSize}px "FontAwesome"`;
                     context.beginPath();
                     context.strokeStyle = element.endLineColor;
                     context.moveTo(x2, yScale.top);
                     context.lineTo(x2, y1);
                     context.stroke();
                     context.fillStyle = element.endColor;
+
+                    let iconTxt = String.fromCharCode(endCode);
+                    let iconSz = context.measureText(iconTxt).width;
                     let iconY = this.avoidCollision(x2, yScale.top + parseInt(element.iconSize));
-                    context.fillText(String.fromCharCode(endCode), x2, iconY);
+                    context.fillText(iconTxt, x2, iconY);
 
                     //stop collisions
-                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + (parseInt(element.iconSize) * 8), y2: iconY + parseInt(element.iconSize) });
+                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + iconSz, y2: iconY + iconSz });
                 }
 
             }
@@ -199,7 +214,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
     async ngOnInit(): Promise<void> {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
-        console.log("INIT",this.widgetHelper.getWidgetConfig());
+        console.log("INIT", this.widgetHelper.getWidgetConfig());
 
         this.startDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().startDate);
         this.endDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().endDate);
@@ -315,7 +330,10 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                                 position: "front", //should default this tbh
                                 startLineColor: this.widgetHelper.getWidgetConfig().eventLineStartColor,
                                 endLineColor: this.widgetHelper.getWidgetConfig().eventLineEndColor,
-                                tooltip: `${ann.name} (${ann.type.name})`
+                                tooltip: `${ann.name} (${ann.type.name})`,
+                                fontColor: this.widgetHelper.getWidgetConfig().fontColor,
+                                fontSize: this.widgetHelper.getWidgetConfig().fontSize,
+                                showContextLabels: this.widgetHelper.getWidgetConfig().showContextLabels
                             }
                         );
 
