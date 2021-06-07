@@ -49,7 +49,7 @@
             Date ranges
         -->
         <div class="row form-group">
-            <div class="col-lg-6 col-layout">
+            <!-- <div class="col-lg-6 col-layout">
                 <div class="input-group mb-1">
                     <div class="input-group-prepend">
                         <span class="input-group-text help-icon" id="basic-addon1">
@@ -87,6 +87,44 @@
                            value="widgetHelper.getWidgetConfig().endTime"
                            [(ngModel)]="widgetHelper.getWidgetConfig().endTime"
                            (change)="onConfigChanged(true)">
+                </div>
+
+            </div> -->
+            <div class="col-lg-6 col-layout">
+                <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text help-icon" id="basic-addon1">
+                            Visible Period
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Choose what period of data to show.">
+
+                        </span>
+                    </div>
+                    <input class="form-control" type="text" id="periodValue" name="periodValue"
+                           value="widgetHelper.getWidgetConfig().periodValue"
+                           [(ngModel)]="widgetHelper.getWidgetConfig().periodValue"
+                           (change)="onConfigChanged(true)">
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text help-icon" id="basic-addon3">
+                            Units
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Choose what unit the period is.">
+
+                        </span>
+                    </div>
+                    <ng-select
+                               [items]="widgetHelper.getWidgetConfig().units"
+                               [closeOnSelect]="true"
+                               [multiple]="false"
+                               [hideSelected]="true"
+                               [(ngModel)]="widgetHelper.getWidgetConfig().periodUnit"
+                               (change)="onConfigChanged()">
+                    </ng-select>
                 </div>
 
             </div>

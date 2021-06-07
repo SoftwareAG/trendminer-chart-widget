@@ -108,7 +108,7 @@ export class TrendMinerService {
         };
 
         ids.forEach(val => {
-            console.log("ID", val);
+            //console.log("ID", val);
             bodyVal.request.queries.push({
                 "id": val,
                 "interpolationType": "linear",
@@ -127,7 +127,7 @@ export class TrendMinerService {
                 "query": `(name == '*${searchTerm}*' or description == '*${searchTerm}*') and datasource.id =in=('11111111-1111-1111-1111-111111111113', '11111111-1111-1111-1111-111111111114', '11111111-1111-1111-1111-111111111112', '11111111-1111-1111-1111-111111111115', '11111111-1111-1111-1111-111111111116')`
             }
         };
-        console.log(bodyVal);
+        //console.log(bodyVal);
         return this.http.post(sUrl, bodyVal).pipe(map((item: any) => item.content.map(v => { return { id: v.id, name: v.name }; })));
     }
 

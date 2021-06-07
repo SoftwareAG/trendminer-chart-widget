@@ -41,6 +41,7 @@ export interface AnnotationDetail {
 export class WidgetConfig {
 
     public units = ["second", "minute", "hour", "day", "week", "month", "year"];
+    public unitVal = [1, 60, 3600, 86400, 604800, 278400, 31536000];
     /**
      * The Chart basic options 
      */
@@ -95,6 +96,8 @@ export class WidgetConfig {
     showContext: boolean;
     realtime: boolean;
     refreshPeriodMinutes: number;
+    periodValue: number;
+    periodUnit: string;
 
     eventSymbolStart: any;
     eventSymbolEnd: any;
@@ -138,8 +141,12 @@ export class WidgetConfig {
         this.eventLineEndColor = "#00FF00";
 
 
+        //default 5 days
+        this.periodUnit = "day";
+        this.periodValue = 5;
+
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
-        console.log("THIS", this);
+        //console.log("THIS", this);
     }
 
     /**

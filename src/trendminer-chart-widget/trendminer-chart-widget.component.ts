@@ -59,7 +59,7 @@ var FontAwesomeAnnotationPlugin = {
         ctx.restore();
     },
     avoidCollision: function (x1: number, iconY: number) {
-        console.log("Y=", iconY, this.areas);
+        //console.log("Y=", iconY, this.areas);
         let colliding: boolean = true;
         //check collisions
         while (colliding) {
@@ -199,7 +199,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
     async ngOnInit(): Promise<void> {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
-        console.log(this.widgetHelper.getWidgetConfig());
+        console.log("INIT",this.widgetHelper.getWidgetConfig());
 
         this.startDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().startDate);
         this.endDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().endDate);
@@ -209,7 +209,6 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
         this.driverObs = combineLatest([this.proxy$, this.startDate$, this.endDate$, this.startTime$, this.endTime$]).subscribe(
             ([p, s, e, st, et]) => {
-                console.log("CHANGE");
                 this.getData(p, s, e, st, et);
             }
         );
@@ -217,7 +216,6 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         this.lineChartOptions = this.widgetHelper.getWidgetConfig().chartConfig;
 
         if (this.widgetHelper.getWidgetConfig().realtime) {
-            console.log("Setting Refresh");
             this.timerVar = setInterval(this.forceRefresh, this.widgetHelper.getWidgetConfig().refreshPeriodMinutes * 60 * 1000, this);
         }
 
@@ -304,7 +302,6 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                     this.lineChartOptions.fontAwesomeAnnotation = [];
                     for (let index = 0; index < annotations.length; index++) {
                         const ann = annotations[index];
-                        console.log(ann);
                         this.lineChartOptions.fontAwesomeAnnotation.push(
                             //now add these
                             {
@@ -325,7 +322,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
                     }
                     this.lineChartOptions.fontAwesomeAnnotation = this.lineChartOptions.fontAwesomeAnnotation.sort((a, b) => DateTime.fromISO(a.startValue).toMillis() - DateTime.fromISO(b.startValue).toMillis());
-                    console.log(this.lineChartOptions.fontAwesomeAnnotation);
+                    // console.log(this.lineChartOptions.fontAwesomeAnnotation);
 
                 },
                 error => this.errorMessage = error

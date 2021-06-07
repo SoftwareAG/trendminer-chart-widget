@@ -46,10 +46,10 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
         this.icons = [...falist.icons];
 
 
-        this.sublist.push(this.input$.subscribe((newTerm) => {
-            console.log(`Typeahead emit: ${newTerm}\n`);
+        // this.sublist.push(this.input$.subscribe((newTerm) => {
+        //     console.log(`Typeahead emit: ${newTerm}\n`);
 
-        }));
+        // }));
 
         this.items$ = this.input$.pipe(
             switchMap((term) => this.trendminer.searchIds(this.widgetHelper.getWidgetConfig().proxy, term))
@@ -81,7 +81,7 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
 
         //should only add the new series
         this.widgetHelper.getWidgetConfig().seriesNames.forEach((v, i) => {
-            console.log("Adding", v);
+            //console.log("Adding", v);
             this.widgetHelper
                 .getWidgetConfig()
                 .addSeries(
@@ -92,8 +92,21 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
                 );
         });
 
-        let startDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}`);
-        let endDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}`);
+        let multiplier = this.widgetHelper.getWidgetConfig().unitVal[this.widgetHelper.getWidgetConfig().units.findIndex((v) => v === this.widgetHelper.getWidgetConfig().periodUnit)];
+        let secondsBackInTime = multiplier * this.widgetHelper.getWidgetConfig().periodValue;
+
+        let startDate = DateTime.now().minus({ seconds: secondsBackInTime });
+        let endDate = DateTime.now();
+
+        // console.log("CALC", multiplier * this.widgetHelper.getWidgetConfig().periodValue, "=", multiplier, this.widgetHelper.getWidgetConfig().periodValue);
+        // console.log("START", startDate);
+        // console.log("END", endDate);
+
+        //        let endDate = DateTime.fromISO(`${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}`);
+        this.widgetHelper.getWidgetConfig().startDate = startDate.toISODate();
+        this.widgetHelper.getWidgetConfig().startTime = startDate.toLocaleString(DateTime.TIME_24_SIMPLE);
+        this.widgetHelper.getWidgetConfig().endDate = endDate.toISODate();
+        this.widgetHelper.getWidgetConfig().endTime = endDate.toLocaleString(DateTime.TIME_24_SIMPLE);
 
         if (updatePeriod) {
             let i = Interval.fromDateTimes(startDate, endDate);
