@@ -1,7 +1,7 @@
 <div>
     <div class="configSection">
         <label for="TrendminerChartWidgetConfig">
-            Trendminer Configuration
+            Trendminer configuration
         </label>
         <!-- 
             Basic config for tren miner access - for example basic url (proxy or direct) 
@@ -27,7 +27,7 @@
         <div class="row form-group">
             <div class="col-lg-6">
                 <label class="label-with-help" for="TrendminerChartWidget-myValue">
-                    select one or more series to chart
+                    Select one or more series to chart
                     <span class="help-icon">
                         <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
                              title="Select one or more time series for the chart.">
@@ -94,7 +94,7 @@
                 <div class="input-group mb-1">
                     <div class="input-group-prepend">
                         <span class="input-group-text help-icon" id="basic-addon1">
-                            Visible Period
+                            Visible period
                             <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
                                  title="Choose what period of data to show.">
 
@@ -139,7 +139,7 @@
     <ng-container *ngIf="widgetHelper.getWidgetConfig().hasSeries()">
         <div class="configSection">
             <label for="TrendminerChartWidgetConfig">
-                Chart Options
+                Chart options
             </label>
             <div class="row">
                 <div class="col-lg-6">
@@ -198,7 +198,7 @@
             <div class="row">
                 <div class=" col-lg-1">
                     <label>
-                        symbol
+                        Symbol
                     </label>
                     <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
                            [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolStartColor"
@@ -207,7 +207,7 @@
                 </div>
                 <div class=" col-lg-1">
                     <label>
-                        line
+                        Line
                     </label>
                     <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
                            [(ngModel)]="widgetHelper.getWidgetConfig().eventLineStartColor"
@@ -217,7 +217,7 @@
                 <!-- Choose icon -->
                 <div class="col-lg-9">
                     <label class="label-with-help" for="TrendminerChartWidget-fa-chooser">
-                        start Icon
+                        Start icon
                         <span class="help-icon">
                             <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
                                  title="Choose icon for the start of events.">
@@ -253,7 +253,7 @@
 
                 <div class=" col-lg-1">
                     <label>
-                        symbol
+                        Symbol
                     </label>
                     <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
                            [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolEndColor"
@@ -262,7 +262,7 @@
                 </div>
                 <div class=" col-lg-1">
                     <label>
-                        line
+                        Line
                     </label>
                     <input class="form-control" type="color" [ngModelOptions]="{ standalone: true }"
                            [(ngModel)]="widgetHelper.getWidgetConfig().eventLineEndColor"
@@ -321,7 +321,7 @@
                 </div>
                 <div class=" col-lg-1">
                     <label>
-                        size
+                        Size
                     </label>
                     <input class="form-control" type="text" [ngModelOptions]="{ standalone: true }"
                            [(ngModel)]="widgetHelper.getWidgetConfig().fontSize"
@@ -338,7 +338,7 @@
                                    [(ngModel)]="widgetHelper.getWidgetConfig().realtime"
                                    (ngModelChange)="onConfigChanged()" />
                             <span class="input-group-text" id="basic-addon2">
-                                refresh every
+                                Refresh every
                             </span>
                         </div>
                         <input class="form-control" type="text"
@@ -361,7 +361,7 @@
     <ng-container *ngIf="widgetHelper.getWidgetConfig().hasSeries()">
         <div class="configSection">
             <label for="TrendminerChartWidgetConfig">
-                Series Options
+                Series options
             </label>
 
             <!-- Each series -->
