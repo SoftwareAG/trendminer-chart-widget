@@ -4,40 +4,28 @@
 
 The Trendminer chart widget allows you to create graphs showing customizable amounts of data from one or more series with context events overlayed.
 
-![Charts](/styles/previewImage.png)
+![Charts](/assets/img-preview.png)
 
 ## Features
 
-### Chart Types
+### Chart TrendMiner series.
 
-The widget currently supports the following chart types
+- Line charts only currently.
 
-- line and spline
-  - ![line and spline](/images/line_vs_spline.png)
-  - supporting multiple plots on the same graph
-- bar & horizontal bar
-  - supporting stacked
-  - ![horizontal and vertical stacked bars](/images/horz_vs_vertbar.png)
-- pie & doughnut
-  - aggregated by time or value range buckets
-  - ![bucket types](/images/buckets.png)
-- radar
-- scatter and bubble
-
-_There will be more added in the future depending on demand (E.G histogram)_
+_There will be more added in the future depending on demand (E.G trendminer histogram data)_
 
 ### Customization
 
-- Selected data ranges configurable (# of measurements, time range)
-- precision of data configurable
-- Choose which Axes are displayed and scaled
-- Show Aggregate data (Moving average, Bollinger Bands, or both)
-- Choose colours for plotted data, data point visibility
-- configurable legend
+- Selected data ranges configurable (time range)
+- Choose colours for plotted data
 - show and hide data by clicking legend items, tool tips
-- configurable label format for times
-
-![Options](/images/options.png)
+- configurable label times
+- fill area under line
+- Plot multiple series on the same chart
+- Show context events on the chart 
+  -  Choose Icons, color and size for start and end event
+- Show labels with the context events
+  - Choose the color and size of the labels.
 
 ## Installation
 
@@ -54,102 +42,59 @@ NOTE: This guide assumes that you have followed the [installation](https://githu
 1. Open the Application Builder application from the app switcher (Next to your username in the top right)
 2. Add a new dashboard or navigate to an existing dashboard
 3. Click `Add Widget`
-4. Search for `Data Points Charting` ![devices and measurements](/images/add_widget.png)
+4. Search for `TrendMiner` 
 5. See below for the configuration options
 
+### Configuration
 The widget configuration page contains a number of configuration attributes.
 
 - **Title** : Enter the title which will display at the top of your widget
 
-**Device and Measurement Configuration** section
+**TrendMiner Configuration** section
+- **Address** : The calls to TrendMiner are proxyied through API gateway, enter the address of the proxy here. 
+- **Series** : Much the same as the TrendMiner UI click into the box and start typing to see a list of possible series that can be added.
+  - Multiple series can be chosen 
+- **Visible period**: Choose a period of time fom the current time to display. E.G. the last 5 days. 
+  
+**Chart Options** section
 
-- **Device** : Select one or more devices, once you do you will then be able to select measurements. Deselect options in the dropdown or click the 'x' to remove them.
-  - The list contains devices, as well as groups defined in the cumulocity application. 
-  - When choosing a group (Such as Laboratory in the picture below) The measurements will be labeled to indicate that they are part of that group. 
+- **Chart Labels** : Define what labels should show on the time axis of the chart. 
+- **Show context events** : Show or hide context events on the chart. 
+- **Fill area** : Fill under the plotted line. 
+- **Icon size** : What size to show the event icon(s) on the chart. 
+- **Start symbol, line and icon** : Choose the line colors and icon to show. 
+- **End symbol, line and icon** : Choose the line colors and icon to show. 
+- **Show context labels** : Choose to show the labels for the events that show name and type of event. 
+- **Label font color and size** : Choose label color and size. 
+- **Refresh every...** : The graph will update periodically if checked. 
 
-![devices and measurements](/images/devandmeas.png)
+**Series Options** section
+- **Color** : Choose the color for the series to be plotted in.
+### Example configuration
 
-  - You will now be able to choose to plot an extra series for the group by checking a box shown at the top of the list in the config
+![example configuration](/images/configuration.gif)
 
-![devices and measurements](/images/groupseries.png)
+The end result of the choices shown above are the following chart
 
-- **Measurement** : Select the measurement fragment and series from the dropdown. You can deselect them in a similar way to the devices.
+![example configuration](/images/example-chart.png)
 
-  - define the range of data points to use by changing the Amount, Unit
-  - define the accuracy and display of data values by changing the number of decimal points to show.
+### Chart screen
 
-- **Group measurements within time unit**: This allows you to show raw data, or average or sum measurements them when received within the unit of the range you chose (E.G average values by minute).
+There are a number of controls on the front screen that can be used to change the display. 
 
-  - The time unit you chose for the range will determine how the measurements are grouped. The _sum measurements in group_ checkbox will change from the default of averaging to summing the values.
-  - This can be disabled in certain circumstances (See 'Plotting one series against another below')
+firstly if you want to update the chart to the current time, click the refresh button on the top right. You might want to do this if the refresh rate of the widget is low and you wish to get up to datye information.
 
-- **Clear Measurement Cache**: We store data for charts within the browser so that if you choose a large volume of historic data we can avoid the delay of retrieving it every time you load the chart. This button will clear **ALL** data for all the charts. 
+![Force update](/images/force-update.gif)
 
-- **Global Chart Options** : Here you can choose things like chart type and display options for axes and the legend. _Note_ the global section will only appear once you have selected the devices and measurements.
+Next you can start or stop regular refreshes (based on the configuration) using the play/pause button. 
 
-![devices and measurements](/images/global.gif)
+![periodic update](/images/update.gif)
 
-**NOTE**: Once the **Target Assets or Devices** and **Measurement** information has been populated, you can click the 'Save' button to configure the widget with the default settings
+Lastly using the date controls you can change the displayed data. 
 
-- **Series Settings** : Below the global settings you will see a row for each measurement series you selected. By clicking on the row you will expand options that can be set per series. Depending on the chart type there may be further options which can be exposed by clicking the show advanced options checkbox.
+![Dates update](/images/update-dates.gif)
 
-![series](/images/series.gif)
 
-- Change the series display name (reflected in the legend)
-- Change the series plot colour.
-- Currently the line chart has advanced options
-
-![series](/images/advanced.gif)
-
-- hide measurements will hide the plot of the source data
-- choose an option from the _display aggregate_ drop down to show the colour and averaging period (number of measurements)
-- display aggregate allows you to choose to plot a moving average and/or Bollinger Bands
-
-### Pie & Doughnut Charts
-
-When plotting a single series you have the option of choosing a _pie_ or _doughnut_ chart. If you do then you need to aggregate or
-bucket the data to allow it to be displayed.
-
-- After choosing your series, change the chart type to _pie_ or _doughnut_
-- The Amount of data chosen and it's unit will determine the time buckets (categories) in the chart.
-- The following is a pie chart showing counts of measurements within time periods
-
-![series](/images/pie.gif)
-
-- We can also create a chart showing the number of measurements within value ranges
-  - These are defined in the config
-- The number of buckets will determine the bucket ranges when aggregating by value.
-
-![series](/images/value_buckets.png)
-
-### Plotting one series against another
-
-The example shown here is a plot of the PH measured against a measure of PO4 (Phosphate) in a boiler. The relationship in this made up example is linear and so we should see a straight line when they are plotted against each other.
-
-It is important to make sure that the data you wish to plot is related in some way, and that the measurements will arrive approximately at the same time.
-
-- After choosing your series, check the _Plot data points from one series against another_
-- This will change the display so you can choose the x and y of the chart.
-- Select the color and tolerance of what time stamps should match.
-
-When you choose the 2 series and decide to plot them against each other the configuration will automatically switch on the "group measurements" option.
-
-![series](/images/group.png)
-
-It will be disabled so that it cannot be turned off.
-
-![series](/images/multivariate.gif)
-
-The above chart is a basic line chart, but you can use the ability to plot data against another series in other types:
-
-- radar
-  ![series](/images/radar.png)
-
-- scatter
-  ![series](/images/scatter.png)
-
-- bubble (x,y,r) r = diameter of plotted point
-  ![series](/images/bubble.png)
 
 ---
 
