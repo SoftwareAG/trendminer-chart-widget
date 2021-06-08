@@ -190,6 +190,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
     startTime$: BehaviorSubject<string>;
     endTime$: BehaviorSubject<string>;
     proxy$: BehaviorSubject<string>;
+    changed$: BehaviorSubject<boolean>;
 
     timerVar: any;
 
@@ -216,14 +217,23 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
         console.log("INIT", this.widgetHelper.getWidgetConfig());
 
+        this.changed$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().changed);
         this.startDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().startDate);
         this.endDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().endDate);
         this.startTime$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().startTime);
         this.endTime$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().endTime);
         this.proxy$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().proxy);
 
-        this.driverObs = combineLatest([this.proxy$, this.startDate$, this.endDate$, this.startTime$, this.endTime$]).subscribe(
-            ([p, s, e, st, et]) => {
+        if (this.sub.length > 0) {
+            this.sub.forEach(s => s.unsubscribe());
+            this.driverObs.unsubscribe();
+        }
+
+        this.driverObs = combineLatest([this.changed$, this.proxy$, this.startDate$, this.endDate$, this.startTime$, this.endTime$]).subscribe(
+            ([c, p, s, e, st, et]) => {
+                if (c === true) {
+                    this.widgetHelper.getWidgetConfig().changed = false;
+                }
                 this.getData(p, s, e, st, et);
             }
         );

@@ -121,6 +121,7 @@ export class TrendminerChartWidgetConfig implements OnInit, OnDestroy {
                 }, "seconds");
         }
 
+        this.widgetHelper.getWidgetConfig().changed = true;
         console.log(this.config);
         this.widgetHelper.setWidgetConfig(this.config);
 
