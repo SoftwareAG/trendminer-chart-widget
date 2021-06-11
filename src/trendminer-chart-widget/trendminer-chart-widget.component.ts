@@ -42,7 +42,7 @@ const chartStates = new Map();
 var FontAwesomeAnnotationPlugin = {
     id: 'FontAwesomeAnnotationPlugin',
     beforeUpdate(_chart, _options) {
-        console.log("UPDATE");
+        //console.log("UPDATE");
         this.areas = {};
     },
     areas: {},
@@ -67,14 +67,14 @@ var FontAwesomeAnnotationPlugin = {
         //check collisions
         while (colliding) {
             colliding = false;
-            console.log(this.areas, x1, iconY);
+            //console.log(this.areas, x1, iconY);
             for (const area in this.areas) {
                 if (Object.prototype.hasOwnProperty.call(this.areas, area)) {
                     const element = this.areas[area];
                     if (x1 >= element.x1 && x1 <= element.x2 && iconY >= element.y1 && iconY <= element.y2) {
                         iconY = element.y2 + 1;
                         colliding = true;
-                        console.log("COLIDED", element, x1, iconY);
+                        //console.log("COLIDED", element, x1, iconY);
                         break;
                     }
                 }
@@ -131,24 +131,24 @@ var FontAwesomeAnnotationPlugin = {
 
                         //stop collisions
                         this.areas[element.tooltip] = { x1: x1, y1: iconY, x2: x1 + iconSz + textSz, y2: iconY + iconSz };
-                    }
-                    if (x2 !== undefined && !(`${element.tooltip}-end` in this.areas)) {
-                        // reset font
-                        context.font = `600 ${element.iconSize}px "FontAwesome"`;
-                        context.beginPath();
-                        context.strokeStyle = element.endLineColor;
-                        context.moveTo(x2, yScale.top);
-                        context.lineTo(x2, y1);
-                        context.stroke();
-                        context.fillStyle = element.endColor;
+                        if (x2 !== undefined && !(`${element.tooltip}-end` in this.areas)) {
+                            // reset font
+                            context.font = `600 ${element.iconSize}px "FontAwesome"`;
+                            context.beginPath();
+                            context.strokeStyle = element.endLineColor;
+                            context.moveTo(x2, yScale.top);
+                            context.lineTo(x2, y1);
+                            context.stroke();
+                            context.fillStyle = element.endColor;
 
-                        let iconTxt = String.fromCharCode(endCode);
-                        let iconSz = context.measureText(iconTxt).width;
-                        let iconY = this.avoidCollision(x2, yScale.top + parseInt(element.iconSize));
-                        context.fillText(iconTxt, x2, iconY);
+                            let iconTxt = String.fromCharCode(endCode);
+                            let iconSz = context.measureText(iconTxt).width;
+                            iconY = this.avoidCollision(x2, iconY);
+                            context.fillText(iconTxt, x2, iconY);
 
-                        //stop collisions
-                        this.areas[`${element.tooltip}-end`] = { x1: x2, y1: iconY, x2: x2 + iconSz, y2: iconY + iconSz };
+                            //stop collisions
+                            this.areas[`${element.tooltip}-end`] = { x1: x2, y1: iconY, x2: x2 + iconSz, y2: iconY + iconSz };
+                        }
                     }
 
                 }
@@ -159,7 +159,7 @@ var FontAwesomeAnnotationPlugin = {
 
     // draw the image in front of most chart elements
     afterDraw: function (chartInstance) {
-        console.log("UPDATE");
+        //console.log("UPDATE");
         this.areas = {};
         this.drawFontAwesomeAnnotation(chartInstance, "front");
     }
@@ -211,7 +211,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
     async ngOnInit(): Promise<void> {
         this.widgetHelper = new WidgetHelper(this.config, WidgetConfig); //default access through here
-        console.log("INIT", this.widgetHelper.getWidgetConfig());
+        //console.log("INIT", this.widgetHelper.getWidgetConfig());
 
         this.changed$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().changed);
         this.startDate$ = new BehaviorSubject(this.widgetHelper.getWidgetConfig().startDate);
@@ -235,7 +235,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
         this.driverObs = combineLatest([this.proxy$, this.startDate$, this.endDate$, this.startTime$, this.endTime$]).subscribe(
             ([p, s, e, st, et]) => {
-                console.log([p, s, e, st, et]);
+                //console.log([p, s, e, st, et]);
                 this.getData(p, s, e, st, et);
                 this.lineChartOptions = this.widgetHelper.getWidgetConfig().getChartConfig();
             }
@@ -277,7 +277,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         let secondsBackInTime = multiplier * comp.widgetHelper.getWidgetConfig().periodValue;
         let startDate = DateTime.now().minus({ seconds: secondsBackInTime });
         let endDate = DateTime.now();
-        console.log("Refresh Data", multiplier, secondsBackInTime, startDate, endDate);
+        //console.log("Refresh Data", multiplier, secondsBackInTime, startDate, endDate);
 
         comp.widgetHelper.getWidgetConfig().endDate = endDate.toISODate();
         comp.widgetHelper.getWidgetConfig().endTime = endDate.toLocaleString(DateTime.TIME_24_SIMPLE);
@@ -295,7 +295,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
     getData(prox: string, startDate: string, endDate: string, startTime: string, endTime: string) {
         let startDateTime = DateTime.fromISO(`${startDate}T${startTime}`);
         let endDateTime = DateTime.fromISO(`${endDate}T${endTime}`);
-        console.log("DATES", startDate, endDate);
+        //console.log("DATES", startDate, endDate);
         //clear previous before next - async calls effectively
         this.sub.forEach(s => s.unsubscribe());
 
@@ -311,7 +311,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         this.sub.push(combineLatest([ob1, ob2]).subscribe(
             ([data, context]: [any[], any]) => {
                 this.lineChartData.length = 0;
-                console.log("COMBINE", [data, context]);
+                //console.log("COMBINE", [data, context]);
 
 
                 data.forEach(element => {
