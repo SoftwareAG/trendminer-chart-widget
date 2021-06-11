@@ -21,6 +21,7 @@ interface SeriesDetail {
 }
 
 export interface AnnotationDetail {
+    name: string;
     startCode: string;
     endCode: string;
     iconSize: string;
@@ -44,12 +45,12 @@ export interface AnnotationDetail {
 export class WidgetConfig {
 
     public units = ["second", "minute", "hour", "day", "week", "month", "year"];
-    public unitVal = [1, 60, 3600, 86400, 604800, 278400, 31536000];
+    public unitVal = [1, 60, 3600, 86400, 592200, 2622600, 30879000];
     /**
      * The Chart basic options 
      */
 
-    public chartConfig: (ChartOptions & { fontAwesomeAnnotation: AnnotationDetail[]; }) = {
+    public chartConfig: (ChartOptions & { fontAwesomeAnnotation: { annotations: AnnotationDetail[]; }; }) = {
         responsive: true,
         scales: {
             // We use this empty structure as a placeholder for dynamic theming.
@@ -63,7 +64,7 @@ export class WidgetConfig {
             }],
             yAxes: []
         },
-        fontAwesomeAnnotation: [],
+        fontAwesomeAnnotation: { annotations: [] },
     };
 
     /**
@@ -155,9 +156,12 @@ export class WidgetConfig {
         this.fontColor = "#000000";
         this.fontSize = 10;
         this.showContextLabels = true;
-
         this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
         //console.log("THIS", this);
+    }
+
+    getChartConfig() {
+        return this.chartConfig;
     }
 
     /**

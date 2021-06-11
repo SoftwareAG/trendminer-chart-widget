@@ -22,7 +22,6 @@
 import { Component, Input, OnDestroy, ViewChild, OnInit } from "@angular/core";
 import { Realtime, InventoryService } from "@c8y/client";
 import { Chart, ChartDataSets, ChartOptions, ChartPoint, ChartType, TimeUnit } from "chart.js";
-//import annotationPlugin from 'chartjs-plugin-annotation';
 import { ThemeService, BaseChartDirective, Label } from "ng2-charts";
 import { TrendMinerService } from "./trendminer-service";
 import { DateTime } from 'luxon';
@@ -30,7 +29,6 @@ import { WidgetHelper } from "./widget-helper";
 import { AnnotationDetail, WidgetConfig } from './widget-config';
 import { BehaviorSubject, combineLatest } from "rxjs";
 import * as _ from 'lodash';
-import { icon } from "@fortawesome/fontawesome-svg-core";
 
 
 export function scaleValue(scale, value, fallback) {
@@ -38,12 +36,16 @@ export function scaleValue(scale, value, fallback) {
     return isFinite(value) ? scale.getPixelForValue(value) : fallback;
 }
 
+const chartStates = new Map();
 
 
 var FontAwesomeAnnotationPlugin = {
-
-    areas: [],
-
+    id: 'FontAwesomeAnnotationPlugin',
+    beforeUpdate(_chart, _options) {
+        console.log("UPDATE");
+        this.areas = {};
+    },
+    areas: {},
     hatchRect: function (ctx, x1, y1, dx, dy, delta, color) {
         ctx.rect(x1, y1, dx, dy);
         ctx.save();
@@ -65,106 +67,100 @@ var FontAwesomeAnnotationPlugin = {
         //check collisions
         while (colliding) {
             colliding = false;
-            for (let index = 0; index < this.areas.length; index++) {
-                const element = this.areas[index];
-                if (x1 >= element.x1 && x1 <= element.x2 && iconY >= element.y1 && iconY <= element.y2) {
-                    iconY = element.y2 + 1;
-                    colliding = true;
-                    break;
+            console.log(this.areas, x1, iconY);
+            for (const area in this.areas) {
+                if (Object.prototype.hasOwnProperty.call(this.areas, area)) {
+                    const element = this.areas[area];
+                    if (x1 >= element.x1 && x1 <= element.x2 && iconY >= element.y1 && iconY <= element.y2) {
+                        iconY = element.y2 + 1;
+                        colliding = true;
+                        console.log("COLIDED", element, x1, iconY);
+                        break;
+                    }
                 }
             }
         }
         return iconY;
     },
     drawFontAwesomeAnnotation: function (chartInstance, position) {
-        let options: ChartOptions & { fontAwesomeAnnotation: AnnotationDetail[]; } = chartInstance.options;
-        const xScale = chartInstance.scales['x-axis-0'];
-        const yScale = chartInstance.scales[chartInstance.data.datasets[0].yAxisID];
-        // only draw images meant for us
-        //if (options.fontAwesomeAnnotation.position != position) return;
-        this.areas.length = 0;
-
 
         let context = chartInstance.chart.ctx;
-        options.fontAwesomeAnnotation.forEach((element: AnnotationDetail) => {
+        const xScale = chartInstance.scales['x-axis-0'];
+        const yScale = chartInstance.scales[chartInstance.data.datasets[0].yAxisID];
 
-            if (element.position === position) {
-                //properties - weight, size and colour
-                context.font = `600 ${element.iconSize}px "FontAwesome"`;
+        if (chartInstance.data.datasets.length > 0) {
+            let annotationsToDraw = chartInstance.data.datasets[0].annotations.sort((a, b) => DateTime.fromISO(a.startValue).toMillis() - DateTime.fromISO(b.startValue).toMillis());
+            annotationsToDraw.forEach((element: AnnotationDetail) => {
+                if (element.position === position) {
+                    //properties - weight, size and colour
+                    context.font = `600 ${element.iconSize}px "FontAwesome"`;
 
-                //start and end event
-                let startCode = parseInt(`0x${element.startCode}`);
-                let endCode = parseInt(`0x${element.endCode}`);
-                let x1 = scaleValue(xScale, element.startValue, undefined);
-                let x2 = scaleValue(xScale, element.endValue, undefined);
-                let y1 = scaleValue(yScale, 0, undefined);
+                    //start and end event
+                    let startCode = parseInt(`0x${element.startCode}`);
+                    let endCode = parseInt(`0x${element.endCode}`);
+                    let x1 = scaleValue(xScale, element.startValue, undefined);
+                    let x2 = scaleValue(xScale, element.endValue, undefined);
+                    let y1 = scaleValue(yScale, 0, undefined);
 
-                //start and end lines for event
-                if (x1 !== undefined) {
-                    // draw line
-                    context.beginPath();
-                    context.strokeStyle = element.startLineColor;
-                    context.moveTo(x1, yScale.top);
-                    context.lineTo(x1, y1);
-                    context.stroke();
+                    //start and end lines for event
+                    if (x1 !== undefined && !(element.tooltip in this.areas)) {
+                        // draw line
+                        context.beginPath();
+                        context.strokeStyle = element.startLineColor;
+                        context.moveTo(x1, yScale.top);
+                        context.lineTo(x1, y1);
+                        context.stroke();
 
-                    let thesum: number = yScale.top + parseInt(element.iconSize);
-                    let iconY: number = this.avoidCollision(x1, thesum);
+                        let thesum: number = yScale.top + parseInt(element.iconSize);
+                        let iconY: number = this.avoidCollision(x1, thesum);
 
-                    let iconTxt = String.fromCharCode(startCode);
-                    let iconSz = context.measureText(iconTxt).width;
-                    let textSz = 0; //if off no width
+                        let iconTxt = String.fromCharCode(startCode);
+                        let iconSz = context.measureText(iconTxt).width;
+                        let textSz = 0; //if off no width
 
-                    //icon
-                    context.fillStyle = element.startColor;
-                    context.fillText(iconTxt, x1, iconY);
-                    if (element.showContextLabels) {
-                        context.font = `600 ${element.fontSize}px "FontAwesome"`;
-                        context.fillStyle = element.fontColor;
-                        let txt = ` ${element.tooltip}`;
-                        textSz = context.measureText(txt).width; //store width
-                        context.fillText(txt, x1 + iconSz, iconY);
+                        //icon
+                        context.fillStyle = element.startColor;
+                        context.fillText(iconTxt, x1, iconY);
+                        if (element.showContextLabels) {
+                            context.font = `600 ${element.fontSize}px "FontAwesome"`;
+                            context.fillStyle = element.fontColor;
+                            let txt = ` ${element.tooltip}`;
+                            textSz = context.measureText(txt).width; //store width
+                            context.fillText(txt, x1 + iconSz, iconY);
+                        }
+
+                        //stop collisions
+                        this.areas[element.tooltip] = { x1: x1, y1: iconY, x2: x1 + iconSz + textSz, y2: iconY + iconSz };
+                    }
+                    if (x2 !== undefined && !(`${element.tooltip}-end` in this.areas)) {
+                        // reset font
+                        context.font = `600 ${element.iconSize}px "FontAwesome"`;
+                        context.beginPath();
+                        context.strokeStyle = element.endLineColor;
+                        context.moveTo(x2, yScale.top);
+                        context.lineTo(x2, y1);
+                        context.stroke();
+                        context.fillStyle = element.endColor;
+
+                        let iconTxt = String.fromCharCode(endCode);
+                        let iconSz = context.measureText(iconTxt).width;
+                        let iconY = this.avoidCollision(x2, yScale.top + parseInt(element.iconSize));
+                        context.fillText(iconTxt, x2, iconY);
+
+                        //stop collisions
+                        this.areas[`${element.tooltip}-end`] = { x1: x2, y1: iconY, x2: x2 + iconSz, y2: iconY + iconSz };
                     }
 
-                    //stop collisions
-                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + iconSz + textSz, y2: iconY + iconSz });
                 }
-                if (x2 !== undefined) {
-                    // reset font
-                    context.font = `600 ${element.iconSize}px "FontAwesome"`;
-                    context.beginPath();
-                    context.strokeStyle = element.endLineColor;
-                    context.moveTo(x2, yScale.top);
-                    context.lineTo(x2, y1);
-                    context.stroke();
-                    context.fillStyle = element.endColor;
+            });
 
-                    let iconTxt = String.fromCharCode(endCode);
-                    let iconSz = context.measureText(iconTxt).width;
-                    let iconY = this.avoidCollision(x2, yScale.top + parseInt(element.iconSize));
-                    context.fillText(iconTxt, x2, iconY);
-
-                    //stop collisions
-                    this.areas.push({ x1: x1, y1: iconY, x2: x1 + iconSz, y2: iconY + iconSz });
-                }
-
-            }
-        });
-    },
-
-    beforeInit: function (chartInstance) {
-        let options: ChartOptions & { fontAwesomeAnnotation: AnnotationDetail[]; } = chartInstance.options;
-        if (!options.fontAwesomeAnnotation) {
-            options.fontAwesomeAnnotation = [];
         }
     },
 
-    // draw the image behind most chart elements
-    beforeDraw: function (chartInstance) {
-        this.drawFontAwesomeAnnotation(chartInstance, "back");
-    },
     // draw the image in front of most chart elements
     afterDraw: function (chartInstance) {
+        console.log("UPDATE");
+        this.areas = {};
         this.drawFontAwesomeAnnotation(chartInstance, "front");
     }
 };
@@ -226,22 +222,28 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
         if (this.sub.length > 0) {
             this.sub.forEach(s => s.unsubscribe());
+        }
+
+        if (this.driverObs) {
             this.driverObs.unsubscribe();
         }
 
-        this.driverObs = combineLatest([this.changed$, this.proxy$, this.startDate$, this.endDate$, this.startTime$, this.endTime$]).subscribe(
-            ([c, p, s, e, st, et]) => {
-                if (c === true) {
-                    this.widgetHelper.getWidgetConfig().changed = false;
-                }
+        this.changed$.subscribe((v) => {
+            this.widgetHelper.getWidgetConfig().changed = false;
+            this.forceRefresh(this);
+        });
+
+        this.driverObs = combineLatest([this.proxy$, this.startDate$, this.endDate$, this.startTime$, this.endTime$]).subscribe(
+            ([p, s, e, st, et]) => {
+                console.log([p, s, e, st, et]);
                 this.getData(p, s, e, st, et);
+                this.lineChartOptions = this.widgetHelper.getWidgetConfig().getChartConfig();
             }
         );
 
-        this.lineChartOptions = this.widgetHelper.getWidgetConfig().chartConfig;
 
         if (this.widgetHelper.getWidgetConfig().realtime) {
-            this.timerVar = setInterval(this.forceRefresh, this.widgetHelper.getWidgetConfig().refreshPeriodMinutes * 60 * 1000, this);
+            this.startRefresh();
         }
 
     }
@@ -255,35 +257,63 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
         this.widgetHelper.getWidgetConfig().realtime = !this.widgetHelper.getWidgetConfig().realtime;
         if (this.widgetHelper.getWidgetConfig().realtime) {
             console.log("Setting Refresh");
-            this.timerVar = setInterval(this.forceRefresh, this.widgetHelper.getWidgetConfig().refreshPeriodMinutes * 60 * 1000, this);
+            this.startRefresh();
         } else {
             console.log("Clearing Refresh");
             clearInterval(this.timerVar);
+            this.timerVar = undefined;
         }
     }
 
+
+    startRefresh() {
+        this.widgetHelper.getWidgetConfig().realtime = true;
+        if (this.timerVar) { clearInterval(this.timerVar); }
+        this.timerVar = setInterval(this.forceRefresh, this.widgetHelper.getWidgetConfig().refreshPeriodMinutes * 60 * 1000, this);
+    }
+
     forceRefresh(comp: TrendminerChartWidget) {
-        console.log("Refresh Data");
-        comp.widgetHelper.getWidgetConfig().endDate = DateTime.now().toISODate();
-        comp.widgetHelper.getWidgetConfig().endTime = DateTime.now().toLocaleString(DateTime.TIME_24_SIMPLE);
+        let multiplier = comp.widgetHelper.getWidgetConfig().unitVal[comp.widgetHelper.getWidgetConfig().units.findIndex((v) => v === comp.widgetHelper.getWidgetConfig().periodUnit)];
+        let secondsBackInTime = multiplier * comp.widgetHelper.getWidgetConfig().periodValue;
+        let startDate = DateTime.now().minus({ seconds: secondsBackInTime });
+        let endDate = DateTime.now();
+        console.log("Refresh Data", multiplier, secondsBackInTime, startDate, endDate);
+
+        comp.widgetHelper.getWidgetConfig().endDate = endDate.toISODate();
+        comp.widgetHelper.getWidgetConfig().endTime = endDate.toLocaleString(DateTime.TIME_24_SIMPLE);
+        comp.widgetHelper.getWidgetConfig().startDate = startDate.toISODate();
+        comp.widgetHelper.getWidgetConfig().startTime = startDate.toLocaleString(DateTime.TIME_24_SIMPLE);
         comp.emitValues();
     }
 
     ngOnDestroy(): void {
         this.sub.forEach(s => s.unsubscribe());
         this.driverObs.unsubscribe();
+        if (this.timerVar) { clearInterval(this.timerVar); }
     }
 
     getData(prox: string, startDate: string, endDate: string, startTime: string, endTime: string) {
         let startDateTime = DateTime.fromISO(`${startDate}T${startTime}`);
         let endDateTime = DateTime.fromISO(`${endDate}T${endTime}`);
-
+        console.log("DATES", startDate, endDate);
         //clear previous before next - async calls effectively
         this.sub.forEach(s => s.unsubscribe());
+
+        this.widgetHelper.getWidgetConfig().chartConfig.scales.yAxes.length = 0;
+
         this.widgetHelper.getWidgetConfig().chartConfig.scales.xAxes[0].time.unit = <TimeUnit>this.widgetHelper.getWidgetConfig().chartUnit;
-        this.sub.push(this.trendminer.getDataForId(prox, startDateTime.toISO(), endDateTime.toISO(), this.widgetHelper.getWidgetConfig().seriesKeys()).subscribe(
-            (data: any[]) => {
-                this.lineChartData = [];
+        let forAnnotating = [];
+
+
+        let ob1 = this.trendminer.getDataForId(prox, startDateTime.toISO(), endDateTime.toISO(), this.widgetHelper.getWidgetConfig().seriesKeys());
+        let ob2 = this.trendminer.getContextItems(prox, `${startDate}T${startTime}:00Z`, `${endDate}T${endTime}:00Z`, this.widgetHelper.getWidgetConfig().seriesNames);
+
+        this.sub.push(combineLatest([ob1, ob2]).subscribe(
+            ([data, context]: [any[], any]) => {
+                this.lineChartData.length = 0;
+                console.log("COMBINE", [data, context]);
+
+
                 data.forEach(element => {
                     let name = element.tag.id;
                     //let labels: Date[] = element.values;//.map(v => DateTime.fromISO(v.ts).toLocaleString());
@@ -302,6 +332,7 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
 
                         };
                         this.lineChartData.push(chartSeries);
+                        forAnnotating.push(chartSeries);
                         // this.lineChartLabels = [...new Set([...labels.map(d => d.toString()), this.lineChartLabels.map(d => d.toString())])];
                         this.widgetHelper.getWidgetConfig().chartConfig.scales.yAxes.push({
                             id: `y-${element.tag.id}`,
@@ -311,25 +342,20 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                     }
                 });
                 this.hasData = this.lineChartData.length > 0;
-            },
-            error => this.errorMessage = error
-        ));
 
-
-        if (this.widgetHelper.getWidgetConfig().showContext) {
-            // let components = this.widgetHelper.getWidgetConfig().seriesNames.map(s => s.id);
-            this.sub.push(this.trendminer.getContextItems(prox, `${this.widgetHelper.getWidgetConfig().startDate}T${this.widgetHelper.getWidgetConfig().startTime}:00Z`, `${this.widgetHelper.getWidgetConfig().endDate}T${this.widgetHelper.getWidgetConfig().endTime}:00Z`, this.widgetHelper.getWidgetConfig().seriesNames).subscribe(
-                (data: any) => {
-                    let annotations = data.content.map(c => {
+                if (this.widgetHelper.getWidgetConfig().showContext) {
+                    let annotations = context.content.map(c => {
                         return { name: c.shortKey, type: { ...c.type }, startDate: c.startEventDate, endDate: c.endEventDate };
                     });
+                    if (this.hasData) {
+                        this.lineChartData[0].annotations = [];
+                        this.widgetHelper.getWidgetConfig().getChartConfig().fontAwesomeAnnotation.annotations.length = 0;
+                        for (let index = 0; index < annotations.length; index++) {
+                            const ann = annotations[index];
 
-                    this.lineChartOptions.fontAwesomeAnnotation = [];
-                    for (let index = 0; index < annotations.length; index++) {
-                        const ann = annotations[index];
-                        this.lineChartOptions.fontAwesomeAnnotation.push(
-                            //now add these
-                            {
+
+                            let newAnn: AnnotationDetail = {
+                                name: `${ann.name} (${ann.type.name})`,
                                 startCode: this.widgetHelper.getWidgetConfig().eventSymbolStart.code,
                                 endCode: this.widgetHelper.getWidgetConfig().eventSymbolEnd.code,
                                 iconSize: this.widgetHelper.getWidgetConfig().eventSymbolSize,
@@ -344,25 +370,24 @@ export class TrendminerChartWidget implements OnDestroy, OnInit {
                                 fontColor: this.widgetHelper.getWidgetConfig().fontColor,
                                 fontSize: this.widgetHelper.getWidgetConfig().fontSize,
                                 showContextLabels: this.widgetHelper.getWidgetConfig().showContextLabels
-                            }
-                        );
+                            };
 
+                            //this.widgetHelper.getWidgetConfig().getChartConfig().fontAwesomeAnnotation.annotations.push(newAnn);
+                            this.lineChartData[0].annotations.push(newAnn);
+                        }
 
                     }
-                    this.lineChartOptions.fontAwesomeAnnotation = this.lineChartOptions.fontAwesomeAnnotation.sort((a, b) => DateTime.fromISO(a.startValue).toMillis() - DateTime.fromISO(b.startValue).toMillis());
-                    // console.log(this.lineChartOptions.fontAwesomeAnnotation);
+                }
+            }
+        ));
 
-                },
-                error => this.errorMessage = error
-            ));
-        }
     }
 
 
 
-    public lineChartData: ChartDataSets[] = [];
+    public lineChartData: (ChartDataSets & any)[] = [];
     public lineChartLabels: Label[] = [];
-    public lineChartOptions: ChartOptions & { fontAwesomeAnnotation: AnnotationDetail[]; };
+    public lineChartOptions: ChartOptions & { fontAwesomeAnnotation: { annotations: AnnotationDetail[]; }; };
     public lineChartLegend = true;
     public lineChartType: ChartType = 'line';
 

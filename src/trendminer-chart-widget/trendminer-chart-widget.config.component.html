@@ -190,9 +190,14 @@
                 </div>
 
                 <div class=" col-lg-3">
-                    <input class="form-control" type="text"
-                           name="eventSymbolSize" [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolSize"
-                           (change)="onConfigChanged()">
+                    <label class="label-with-help" class="form-check-label" for="contextFlag" translate>
+                        <input class="form-control" type="text"
+                               name="eventSymbolSize" [(ngModel)]="widgetHelper.getWidgetConfig().eventSymbolSize"
+                               (change)="onConfigChanged()">Symbol font size<span class="help-icon">
+                            <img src="{{CONST_HELP_IMAGE_FILE}}" alt="help tooltip"
+                                 title="Show context events on the chart for the chosen range.">
+                        </span>
+                    </label>
                 </div>
             </div>
             <div class="row">
