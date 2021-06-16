@@ -31,7 +31,7 @@ _There will be more added in the future depending on demand (E.G trendminer hist
 
 ### Runtime Widget Deployment?
 
-- This widget supports runtime deployment. Download the [Runtime Binary](https://github.com/SoftwareAG/cumulocity-datapoints-charting-widget/releases/download/v1.1.2/trendminer-chart-wizard-1.0.0.zip) and follow runtime deployment instructions from [here](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
+- This widget supports runtime deployment. Download the [Runtime Binary](https://github.com/SoftwareAG/cumulocity-datapoints-charting-widget/releases/download/v1.0.0/trendminer-chart-wizard-1.0.0.zip) and follow runtime deployment instructions from [here](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
 
 ## User guide
 
