@@ -156,7 +156,7 @@ export class WidgetConfig {
         this.fontColor = "#000000";
         this.fontSize = 10;
         this.showContextLabels = true;
-        this.proxy = 'https://kalpshekhargupta.gateway.webmethodscloud.de/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
+        this.proxy = 'https://democenter.gateway.webmethodscloud.com/gateway/TrendMinerProxy/1.0/restv2/tmproxy/';
         //console.log("THIS", this);
     }
 
