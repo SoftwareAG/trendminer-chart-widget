@@ -1,5 +1,3 @@
-<!-- @format -->
-
 # Trendminer chart widget [<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/trendminer-chart-widget/releases/download/v1.0.0/trendminer-chart-wizard-1.0.0.zip)
 
 The Trendminer chart widget allows you to create graphs showing customizable amounts of data from one or more series with context events overlayed.
