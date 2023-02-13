@@ -1,4 +1,4 @@
-# Trendminer chart widget [<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/trendminer-chart-widget/releases/download/v1.0.0/trendminer-chart-wizard-1.0.0.zip)
+# Trendminer chart widget [<img width="35" src="https://user-images.githubusercontent.com/67993842/97668428-f360cc80-1aa7-11eb-8801-da578bda4334.png"/>](https://github.com/SoftwareAG/trendminer-chart-widget/releases/download/v1.0.1/trendminer-chart-widget-1.0.1.zip)
 
 The Trendminer chart widget allows you to create graphs showing customizable amounts of data from one or more series with context events overlayed.
 
@@ -29,7 +29,7 @@ _There will be more added in the future depending on demand (E.G trendminer hist
 
 ### Runtime Widget Deployment?
 
-- This widget supports runtime deployment. Download the [Runtime Binary](https://github.com/SoftwareAG/cumulocity-datapoints-charting-widget/releases/download/v1.0.0/trendminer-chart-wizard-1.0.0.zip) and follow runtime deployment instructions from [here](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
+- This widget supports runtime deployment. Download the [Runtime Binary](https://github.com/SoftwareAG/trendminer-chart-widget/releases/download/v1.0.1/trendminer-chart-widget-1.0.1.zip) and follow runtime deployment instructions from [here](https://github.com/SoftwareAG/cumulocity-runtime-widget-loader).
 
 ## User guide
 
