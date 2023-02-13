@@ -14,7 +14,7 @@ export class TrendMinerService {
     }
 
     getContextItems(baseURL: string, startDate: string, endDate: string, components: any[]) {
-        let sUrl = `${baseURL}context/item/search?page=0&sort=startEventDate%2Cdesc&size=60&useTimeSeriesIdentifier=true`;
+        let sUrl = `${baseURL}/context/item/search?page=0&sort=startEventDate%2Cdesc&size=60&useTimeSeriesIdentifier=true`;
 
         let bodyVal = {
             "request": {
